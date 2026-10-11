@@ -83,7 +83,7 @@
                             </div>
                         </div>
 
-                        <!-- 3. แผงสมัครสมาชิก (ช่องกรอกอีเมลไม่บังคับ) -->
+                        <!-- 3. แผงสมัครสมาชิก -->
                         <div class="tab-pane fade" id="register-panel" role="tabpanel">
                             <form onsubmit="handleRegister(event)">
                                 <div class="mb-3">
@@ -175,11 +175,15 @@
                 localStorage.setItem('skillverse_user', JSON.stringify(foundUser));
                 localStorage.setItem('skillverse_role', roleType === 'admin' ? 'admin' : (foundUser.role || 'user'));
 
+                // ซิงค์ข้อมูลผู้ใช้เข้าฐานข้อมูลกลางแบบไม่ให้ซ้ำซ้อน
                 let existingUsers = JSON.parse(localStorage.getItem('sv_users_db')) || [];
-                if (!existingUsers.some(u => u.studentId === foundUser.studentId)) {
+                const index = existingUsers.findIndex(u => u.studentId === foundUser.studentId);
+                if (index !== -1) {
+                    existingUsers[index] = { ...existingUsers[index], ...foundUser };
+                } else {
                     existingUsers.push(foundUser);
-                    localStorage.setItem('sv_users_db', JSON.stringify(existingUsers));
                 }
+                localStorage.setItem('sv_users_db', JSON.stringify(existingUsers));
                 
                 alert(`ยินดีต้อนรับคุณ ${foundUser.name} (${roleType === 'admin' ? 'อาจารย์ผู้สอน' : 'นักศึกษา'})`);
                 
@@ -216,8 +220,8 @@
 
             let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
 
-            if (users.some(u => u.studentId === studentId || (email && u.email === email))) {
-                alert('รหัสนักศึกษาหรืออีเมลนี้มีในระบบแล้ว!');
+            if (users.some(u => u.studentId === studentId)) {
+                alert('รหัสนักศึกษานี้มีในระบบแล้ว!');
                 return;
             }
 
