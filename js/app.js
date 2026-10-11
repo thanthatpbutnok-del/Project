@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('careerSelect')) {
             loadProfileCard();
             switchCareer();
-            syncCurrentUserToDB(); // ซิงค์ข้อมูลเข้าฐานข้อมูลกลางให้อัตโนมัติ
+            syncCurrentUserToDB(); // ซิงค์และอัปเดตข้อมูลเข้าฐานข้อมูลกลางแบบไม่ซ้ำซ้อน
         }
     }, 100);
 
@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// ฟังก์ชันซิงค์ข้อมูลผู้ใช้เข้าสู่ฐานข้อมูลกลางแบบไม่ให้ซ้ำซ้อน
 function syncCurrentUserToDB() {
     const currentUser = getCurrentUserSession();
     if (!currentUser) return;
@@ -102,15 +103,7 @@ function saveQuickProfile(event) {
     currentUser.status = "ประเมินเรียบร้อย";
 
     localStorage.setItem('skillverse_user', JSON.stringify(currentUser));
-
-    let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
-    const index = users.findIndex(u => u.studentId === currentUser.studentId || u.name === currentUser.name);
-    if (index !== -1) {
-        users[index] = { ...users[index], ...currentUser };
-    } else {
-        users.push(currentUser);
-    }
-    localStorage.setItem('sv_users_db', JSON.stringify(users));
+    syncCurrentUserToDB(); // บันทึกอัปเดตลงฐานข้อมูลกลางแบบไม่ซ้ำ
 
     loadProfileCard();
     logStudentActivity('แก้ไขโปรไฟล์', `อัปเดตข้อมูลเป็น ${currentUser.name} (อีเมล: ${currentUser.email || 'ไม่ได้ระบุ'})`);
@@ -210,14 +203,7 @@ function calculateScore() {
         currentUser.lastScore = rounded;
         currentUser.targetCareer = key;
         localStorage.setItem('skillverse_user', JSON.stringify(currentUser));
-        
-        let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
-        const index = users.findIndex(u => u.studentId === currentUser.studentId);
-        if (index !== -1) {
-            users[index].lastScore = rounded;
-            users[index].targetCareer = key;
-            localStorage.setItem('sv_users_db', JSON.stringify(users));
-        }
+        syncCurrentUserToDB();
     }
 
     renderBadges(rounded, highSkillsCount);
