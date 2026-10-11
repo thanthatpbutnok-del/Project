@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('careerSelect')) {
             loadProfileCard();
             switchCareer();
+            syncCurrentUserToDB(); // ซิงค์ข้อมูลเข้าฐานข้อมูลกลางให้อัตโนมัติ
         }
     }, 100);
 
@@ -13,6 +14,21 @@ document.addEventListener('DOMContentLoaded', () => {
         renderResourceCards(selectedCategory);
     }
 });
+
+function syncCurrentUserToDB() {
+    const currentUser = getCurrentUserSession();
+    if (!currentUser) return;
+
+    let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
+    const index = users.findIndex(u => u.studentId === currentUser.studentId);
+    
+    if (index !== -1) {
+        users[index] = { ...users[index], ...currentUser };
+    } else {
+        users.push(currentUser);
+    }
+    localStorage.setItem('sv_users_db', JSON.stringify(users));
+}
 
 function logStudentActivity(actionType, details) {
     const currentUser = getCurrentUserSession() || { name: 'นักศึกษาทั่วไป', studentId: 'N/A' };
