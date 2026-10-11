@@ -26,13 +26,11 @@
                     <li class="nav-item"><a class="nav-link active" href="index.html" data-i18n="nav_eval">ประเมินทักษะ</a></li>
                     <li class="nav-item"><a class="nav-link" href="roadmap.html" data-i18n="nav_roadmap">แผนโรดแมป</a></li>
                     <li class="nav-item"><a class="nav-link" href="resources.html" data-i18n="nav_resources">คลังสื่อการเรียนรู้</a></li>
-                    <!-- ปุ่ม Smart Attitude -->
                     <li class="nav-item">
                         <a class="btn btn-sm btn-outline-purple rounded-pill px-3" style="border-color: #8b5cf6; color: #c4b5fd;" href="attitude.html">
                             📊 Smart Attitude
                         </a>
                     </li>
-                    <!-- ปุ่มมินิเกมฝึกทักษะที่เพิ่มเข้ามาใหม่ -->
                     <li class="nav-item">
                         <a class="btn btn-sm btn-outline-success rounded-pill px-3" style="border-color: #10b981; color: #34d399;" href="game.html">
                             🎮 มินิเกมฝึกทักษะ
@@ -63,7 +61,7 @@
                             </button>
                         </div>
                         <p class="text-sub small mb-0 mt-1">
-                            รหัสนักศึกษา: <span id="displayProfileId">6840144204</span> • หมู่เรียน: <span id="displayProfileGroup">ว.6501</span> • รายวิชา: <span id="displayProfileSubject">การออกแบบและพัฒนาเว็บไซต์เบื้องต้น</span>
+                            รหัสนักศึกษา: <span id="displayProfileId">6840144204</span> • หมู่เรียน: <span id="displayProfileGroup">ค.6814</span> • รายวิชา: <span id="displayProfileSubject">การออกแบบและพัฒนาเว็บไซต์เบื้องต้น</span>
                         </p>
                     </div>
                 </div>
@@ -126,7 +124,7 @@
                         <ul class="list-group list-group-flush rounded-3" id="summaryList"></ul>
                     </div>
 
-                    <!-- CTA Connection Buttons & Modal Trigger -->
+                    <!-- CTA Connection Buttons -->
                     <div class="mt-4 d-grid gap-2">
                         <button class="btn btn-custom py-2" onclick="generateReportModal()">
                             <i class="bi bi-file-earmark-text-fill me-2"></i>สร้างรายงานสรุปและคำแนะนำเชิงลึก
@@ -140,7 +138,7 @@
         </div>
     </div>
 
-    <!-- Modal สำหรับแก้ไขข้อมูลส่วนตัว -->
+    <!-- Modal สำหรับแก้ไขข้อมูลส่วนตัว (เพิ่มช่องระบุอีเมล) -->
     <div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content glass-card text-white border-secondary">
@@ -157,6 +155,11 @@
                         <div class="mb-3">
                             <label class="form-label text-sub small">รหัสนักศึกษา</label>
                             <input type="text" class="form-control bg-dark text-white border-secondary" id="modalInputId" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-sub small"><i class="bi bi-envelope-fill me-1 text-info"></i>อีเมลนักศึกษา (สำหรับรับการแจ้งเตือนจากอาจารย์)</label>
+                            <input type="email" class="form-control bg-dark text-white border-secondary" id="modalInputEmail" placeholder="เช่น student@gmail.com">
+                            <div class="form-text text-sub small" style="font-size: 0.75rem;">ระบุเพื่อให้ระบบสามารถส่งอีเมลแจ้งเตือน/รีเซ็ตรหัสผ่านไปยังอีเมลจริงของคุณได้</div>
                         </div>
                         <div class="mb-3">
                             <label class="form-label text-sub small">หมู่เรียน</label>
