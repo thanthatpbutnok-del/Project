@@ -8,6 +8,15 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    
+    <!-- นำเข้า EmailJS SDK สำหรับส่งอีเมลจริง -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // 🔑 ใส่ EmailJS Public Key ของคุณตรงนี้
+            emailjs.init("YOUR_EMAILJS_PUBLIC_KEY");
+        })();
+    </script>
 </head>
 <body>
 
@@ -27,11 +36,10 @@
     <!-- Main Admin Container -->
     <div class="container py-5">
         
-        <!-- Header Title -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="fw-bold text-white mb-1">ระบบหลังบ้านผู้ดูแลระบบ & อาจารย์ผู้สอน</h2>
-                <p class="text-sub mb-0">ติดตามผลประเมิน จัดการรายชื่อนักศึกษา รีเซ็ตรหัสผ่าน และตรวจเช็ค Activity Logs</p>
+                <h2 class="fw-bold text-white mb-1">ระบบหลังบ้านอาจารย์ผู้สอน</h2>
+                <p class="text-sub mb-0">อาจารย์ผู้ดูแลระบบ: <strong class="text-warning">thanthatpbutnok@gmail.com</strong></p>
             </div>
             <div>
                 <button class="btn btn-outline-warning rounded-pill px-3 btn-sm" onclick="seedSampleData()">
@@ -48,7 +56,7 @@
                         <i class="bi bi-people-fill"></i>
                     </div>
                     <div>
-                        <div class="text-sub small">จำนวนนักศึกษาในระบบ</div>
+                        <div class="text-sub small">จำนวนนักศึกษาทั้งหมด</div>
                         <h3 class="fw-bold text-white mb-0" id="statTotalStudents">0</h3>
                     </div>
                 </div>
@@ -92,7 +100,7 @@
         <ul class="nav nav-tabs nav-pills border-bottom-0 mb-4 gap-2" id="adminTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active rounded-pill px-4 text-white" id="students-tab" data-bs-toggle="pill" data-bs-target="#students-panel" type="button" role="tab">
-                    <i class="bi bi-person-lines-fill me-2"></i>รายชื่อนักศึกษา & ผลประเมิน
+                    <i class="bi bi-person-lines-fill me-2"></i>รายชื่อนักศึกษา & อีเมลรับการแจ้งเตือน
                 </button>
             </li>
             <li class="nav-item" role="presentation">
@@ -108,8 +116,8 @@
             <div class="tab-pane fade show active" id="students-panel" role="tabpanel">
                 <div class="glass-card p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold text-white mb-0"><i class="bi bi-table me-2 text-primary"></i>ตารางจัดการข้อมูลนักศึกษา</h5>
-                        <input type="text" class="form-control form-control-sm bg-dark text-white border-secondary w-25" id="searchStudentInput" placeholder="🔍 ค้นหานามสกุล / รหัส..." onkeyup="filterStudentsTable()">
+                        <h5 class="fw-bold text-white mb-0"><i class="bi bi-table me-2 text-primary"></i>ตารางจัดการข้อมูลและส่งอีเมลแจ้งเตือนนักศึกษา</h5>
+                        <input type="text" class="form-control form-control-sm bg-dark text-white border-secondary w-25" id="searchStudentInput" placeholder="🔍 ค้นหานามสกุล / อีเมล / รหัส..." onkeyup="filterStudentsTable()">
                     </div>
 
                     <div class="table-responsive">
@@ -118,10 +126,10 @@
                                 <tr>
                                     <th>รหัสนักศึกษา</th>
                                     <th>ชื่อ - นามสกุล</th>
+                                    <th>อีเมลนักศึกษา</th>
                                     <th>หมู่เรียน</th>
                                     <th>ผลประเมิน</th>
-                                    <th>สถานะ</th>
-                                    <th class="text-end">การจัดการ / ความปลอดภัย</th>
+                                    <th class="text-end">ส่งคำขอรีเซ็ตไปยังอีเมลจริง</th>
                                 </tr>
                             </thead>
                             <tbody id="studentsTableBody">
@@ -147,7 +155,7 @@
                             <thead class="table-secondary text-sub">
                                 <tr>
                                     <th>เวลา</th>
-                                    <th>รหัส/ชื่อนักศึกษา</th>
+                                    <th>นักศึกษา</th>
                                     <th>กิจกรรม (Action)</th>
                                     <th>รายละเอียด</th>
                                 </tr>
@@ -164,82 +172,9 @@
 
     </div>
 
-    <!-- Modal จำลองอีเมลรีเซ็ตรหัสผ่านให้นักศึกษา -->
-    <div class="modal fade" id="resetEmailModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content glass-card text-white border-info">
-                <div class="modal-header border-bottom border-secondary border-opacity-25 bg-info bg-opacity-10">
-                    <h5 class="modal-title fw-bold text-info"><i class="bi bi-envelope-at-fill me-2"></i>จำลองกล่องข้อความอีเมลนักศึกษา</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="p-3 bg-dark rounded-3 border border-secondary border-opacity-25 mb-3">
-                        <p class="mb-1 text-sub small"><strong>ถึง:</strong> <span id="emailTargetStudent" class="text-info">student@university.ac.th</span></p>
-                        <p class="mb-0 text-sub small"><strong>เรื่อง:</strong> แจ้งเตือนการยืนยันการขอรีเซ็ตรหัสผ่านบัญชี SkillVerse</p>
-                    </div>
-
-                    <div class="p-4 rounded-3 text-center bg-dark bg-opacity-50 border border-secondary border-opacity-25">
-                        <i class="bi bi-shield-exclamation text-warning display-4 mb-2"></i>
-                        <h5 class="fw-bold text-white mb-2">คุณต้องการรีเซ็ตรหัสผ่านหรือไม่?</h5>
-                        <p class="text-sub small mb-4">อาจารย์ผู้สอนได้ทำการส่งคำขอรีเซ็ตรหัสผ่านสำหรับบัญชีของคุณ หากคุณเป็นผู้แจ้งลืมรหัสผ่าน กรุณากดปุ่มตกลงด้านล่างเพื่อยืนยันการตั้งรหัสใหม่เป็น <strong>1234</strong></p>
-                        
-                        <button type="button" class="btn btn-success rounded-pill px-5 py-2 fw-bold" onclick="confirmResetPasswordByEmail()">
-                            <i class="bi bi-check-circle-fill me-1"></i> ตกลง ยืนยันการรีเซ็ตรหัสผ่าน
-                        </button>
-                    </div>
-                </div>
-                <div class="modal-footer border-top border-secondary border-opacity-25">
-                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal แก้ไขข้อมูลนักศึกษา -->
-    <div class="modal fade" id="adminEditStudentModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content glass-card text-white border-secondary">
-                <div class="modal-header border-bottom border-secondary border-opacity-25">
-                    <h5 class="modal-title fw-bold text-warning"><i class="bi bi-pencil-square me-2"></i>แก้ไขข้อมูลนักศึกษา</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="adminEditStudentForm" onsubmit="saveAdminEditStudent(event)">
-                        <input type="hidden" id="editOriginalId">
-                        <div class="mb-3">
-                            <label class="form-label text-sub small">รหัสนักศึกษา</label>
-                            <input type="text" class="form-control bg-dark text-white border-secondary" id="editStudentId" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-sub small">ชื่อ - นามสกุล</label>
-                            <input type="text" class="form-control bg-dark text-white border-secondary" id="editStudentName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-sub small">หมู่เรียน</label>
-                            <input type="text" class="form-control bg-dark text-white border-secondary" id="editStudentGroup" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-sub small">สถานะการประเมิน</label>
-                            <select class="form-select bg-dark text-white border-secondary" id="editStudentStatus">
-                                <option value="ประเมินเรียบร้อย">ประเมินเรียบร้อย</option>
-                                <option value="ยังไม่ได้ประเมิน">ยังไม่ได้ประเมิน</option>
-                            </select>
-                        </div>
-                        <div class="d-flex justify-content-end gap-2 mt-4">
-                            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
-                            <button type="submit" class="btn btn-warning rounded-pill px-4 fw-bold">บันทึกการแก้ไข</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/i18n.js"></script>
     <script>
-        let currentTargetStudentId = null;
-
         document.addEventListener('DOMContentLoaded', () => {
             renderAdminDashboard();
         });
@@ -264,19 +199,16 @@
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="fw-bold text-info">${u.studentId}</td>
-                    <td>${u.name} ${u.role === 'admin' ? '<span class="badge bg-warning text-dark ms-1">Admin</span>' : ''}</td>
+                    <td>${u.name} ${u.role === 'admin' ? '<span class="badge bg-warning text-dark ms-1">อาจารย์</span>' : ''}</td>
+                    <td class="text-sub small"><i class="bi bi-envelope me-1"></i>${u.email || 'ยังไม่ได้ระบุ'}</td>
                     <td>${u.group || '-'}</td>
                     <td class="fw-bold ${u.lastScore >= 80 ? 'text-success' : 'text-warning'}">${u.lastScore !== undefined ? u.lastScore + '%' : 'ยังไม่ประเมิน'}</td>
-                    <td><span class="badge ${u.status === 'ประเมินเรียบร้อย' ? 'bg-success' : 'bg-secondary'}">${u.status || 'รอดำเนินการ'}</span></td>
                     <td class="text-end">
-                        <button class="btn btn-sm btn-outline-info rounded-pill me-1" onclick="sendResetEmail('${u.studentId}', '${u.name}')">
-                            <i class="bi bi-envelope-paper-fill"></i> รีเซ็ตรหัสผ่าน
-                        </button>
-                        <button class="btn btn-sm btn-outline-warning rounded-pill me-1" onclick="openAdminEditModal('${u.studentId}')">
-                            <i class="bi bi-pencil-fill"></i> แก้ไข
+                        <button class="btn btn-sm btn-outline-info rounded-pill me-1" onclick="sendRealEmail('${u.studentId}', '${u.name}', '${u.email}')">
+                            <i class="bi bi-send-fill me-1"></i> ส่งอีเมลจริง
                         </button>
                         <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="deleteStudent('${u.studentId}')">
-                            <i class="bi bi-trash-fill"></i> ลบ
+                            <i class="bi bi-trash-fill"></i>
                         </button>
                     </td>
                 `;
@@ -302,47 +234,55 @@
             }
         }
 
-        // ส่งคำขอรีเซ็ตรหัสผ่านไปยังอีเมลนักศึกษา
-        function sendResetEmail(studentId, studentName) {
-            currentTargetStudentId = studentId;
-            document.getElementById('emailTargetStudent').innerText = `${studentName} (${studentId}@student.ac.th)`;
-            
-            const modal = new bootstrap.Modal(document.getElementById('resetEmailModal'));
-            modal.show();
-        }
-
-        // เมื่อนักศึกษากด "ตกลง ยืนยันการรีเซ็ตรหัสผ่าน" ในอีเมล
-        function confirmResetPasswordByEmail() {
-            if (!currentTargetStudentId) return;
-
-            let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
-            const index = users.findIndex(u => u.studentId === currentTargetStudentId);
-
-            if (index !== -1) {
-                users[index].password = '1234'; // คืนค่ารหัสผ่านเริ่มต้นเป็น 1234
-                users[index].pin = '123456';    // คืนค่า PIN เป็น 123456
-                localStorage.setItem('sv_users_db', JSON.stringify(users));
-
-                // บันทึก Activity Log
-                let logs = JSON.parse(localStorage.getItem('sv_activity_logs')) || [];
-                logs.unshift({
-                    id: Date.now(),
-                    studentId: currentTargetStudentId,
-                    studentName: users[index].name,
-                    action: 'รีเซ็ตรหัสผ่าน',
-                    details: 'ยืนยันการรีเซ็ตรหัสผ่านผ่านทางอีเมลสำเร็จ (รหัสใหม่: 1234)',
-                    timestamp: new Date().toLocaleString('th-TH')
-                });
-                localStorage.setItem('sv_activity_logs', JSON.stringify(logs));
-
-                alert(`การรีเซ็ตรหัสผ่านสำเร็จ!\nรหัสผ่านสำหรับรหัส ${currentTargetStudentId} ได้เปลี่ยนเป็น "1234" เรียบร้อยแล้ว`);
-                
-                const modalEl = document.getElementById('resetEmailModal');
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) modal.hide();
-
-                renderAdminDashboard();
+        // 📧 ฟังก์ชันส่งอีเมลจริงไปยังอีเมลนักศึกษาด้วย EmailJS
+        function sendRealEmail(studentId, studentName, studentEmail) {
+            if (!studentEmail) {
+                alert('นักศึกษาคนนี้ยังไม่ได้ระบุอีเมลในระบบ!');
+                return;
             }
+
+            if (!confirm(`คุณต้องการส่งอีเมลแจ้งเตือนรีเซ็ตรหัสผ่านไปยัง: ${studentEmail} ใช่หรือไม่?`)) return;
+
+            // 1. รีเซ็ตรหัสผ่านในระบบเป็น 1234
+            let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
+            const index = users.findIndex(u => u.studentId === studentId);
+            if (index !== -1) {
+                users[index].password = '1234';
+                users[index].pin = '123456';
+                localStorage.setItem('sv_users_db', JSON.stringify(users));
+            }
+
+            // 2. พารามิเตอร์สำหรับส่งใน EmailJS
+            const templateParams = {
+                to_name: studentName,
+                to_email: studentEmail,
+                student_id: studentId,
+                from_email: 'thanthatpbutnok@gmail.com',
+                message: 'อาจารย์ผู้สอนได้ทำการรีเซ็ตรหัสผ่านของคุณในระบบ SkillVerse แล้ว รหัสผ่านใหม่ชั่วคราวคือ: 1234'
+            };
+
+            // 3. ยิงส่งอีเมลไปยัง Gmail ของนักศึกษาจริง
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+                .then(function(response) {
+                    alert(`ส่งอีเมลสำเร็จแล้ว! ระบบได้ส่งข้อความไปที่ ${studentEmail} เรียบร้อยแล้ว`);
+
+                    // บันทึก Activity Log
+                    let logs = JSON.parse(localStorage.getItem('sv_activity_logs')) || [];
+                    logs.unshift({
+                        id: Date.now(),
+                        studentId: studentId,
+                        studentName: studentName,
+                        action: 'ส่งอีเมลจริง',
+                        details: `ส่งอีเมลแจ้งเตือนรีเซ็ตรหัสผ่านไปยัง ${studentEmail} สำเร็จ`,
+                        timestamp: new Date().toLocaleString('th-TH')
+                    });
+                    localStorage.setItem('sv_activity_logs', JSON.stringify(logs));
+
+                    renderAdminDashboard();
+                }, function(error) {
+                    alert('เกิดข้อผิดพลาดในการส่งอีเมล! กรุณาตรวจสอบการตั้งค่า EmailJS ID');
+                    console.error('EmailJS Error:', error);
+                });
         }
 
         function filterStudentsTable() {
@@ -353,44 +293,6 @@
                 const text = row.innerText.toLowerCase();
                 row.style.display = text.includes(query) ? '' : 'none';
             });
-        }
-
-        function openAdminEditModal(studentId) {
-            const users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
-            const user = users.find(u => u.studentId === studentId);
-            if (!user) return;
-
-            document.getElementById('editOriginalId').value = user.studentId;
-            document.getElementById('editStudentId').value = user.studentId;
-            document.getElementById('editStudentName').value = user.name;
-            document.getElementById('editStudentGroup').value = user.group || '';
-            document.getElementById('editStudentStatus').value = user.status || 'ประเมินเรียบร้อย';
-
-            const modal = new bootstrap.Modal(document.getElementById('adminEditStudentModal'));
-            modal.show();
-        }
-
-        function saveAdminEditStudent(event) {
-            event.preventDefault();
-            const origId = document.getElementById('editOriginalId').value;
-            let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
-
-            const index = users.findIndex(u => u.studentId === origId);
-            if (index !== -1) {
-                users[index].studentId = document.getElementById('editStudentId').value.trim();
-                users[index].name = document.getElementById('editStudentName').value.trim();
-                users[index].group = document.getElementById('editStudentGroup').value.trim();
-                users[index].status = document.getElementById('editStudentStatus').value;
-
-                localStorage.setItem('sv_users_db', JSON.stringify(users));
-
-                alert('แก้ไขข้อมูลนักศึกษาสำเร็จ!');
-                renderAdminDashboard();
-
-                const modalEl = document.getElementById('adminEditStudentModal');
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) modal.hide();
-            }
         }
 
         function deleteStudent(studentId) {
@@ -406,12 +308,12 @@
 
         function seedSampleData() {
             const sampleUsers = [
-                { studentId: '6840144204', name: 'นายฐานฑัต บุตรนอก', group: 'ว.6501', status: 'ประเมินเรียบร้อย', lastScore: 85, password: '1234', role: 'admin' },
-                { studentId: '6840144205', name: 'นายสมชาย สายโค้ด', group: 'ว.6501', status: 'ประเมินเรียบร้อย', lastScore: 72, password: '1234', role: 'user' },
-                { studentId: '6840144206', name: 'นางสาววิภา ดีไซน์', group: 'ว.6502', status: 'ประเมินเรียบร้อย', lastScore: 90, password: '1234', role: 'user' }
+                { studentId: '6840144204', name: 'นายฐานฑัต บุตรนอก', email: 'thanthatpbutnok@gmail.com', group: 'ว.6501', status: 'ประเมินเรียบร้อย', lastScore: 85, password: '1234', role: 'admin' },
+                { studentId: '6840144205', name: 'นายสมชาย สายโค้ด', email: 'somchai.code@gmail.com', group: 'ว.6501', status: 'ประเมินเรียบร้อย', lastScore: 72, password: '1234', role: 'user' },
+                { studentId: '6840144206', name: 'นางสาววิภา ดีไซน์', email: 'wipha.design@gmail.com', group: 'ว.6502', status: 'ประเมินเรียบร้อย', lastScore: 90, password: '1234', role: 'user' }
             ];
             localStorage.setItem('sv_users_db', JSON.stringify(sampleUsers));
-            alert('เพิ่มข้อมูลนักศึกษาจำลองเรียบร้อยแล้ว!');
+            alert('เพิ่มข้อมูลนักศึกษาตัวอย่างเรียบร้อยแล้ว!');
             renderAdminDashboard();
         }
 
