@@ -83,7 +83,7 @@
                             </div>
                         </div>
 
-                        <!-- 3. แผงสมัครสมาชิก (สำหรับนักศึกษา) -->
+                        <!-- 3. แผงสมัครสมาชิก (เพิ่มยืนยันรหัสผ่าน + PIN 6 หลัก) -->
                         <div class="tab-pane fade" id="register-panel" role="tabpanel">
                             <form onsubmit="handleRegister(event)">
                                 <div class="mb-3">
@@ -104,9 +104,18 @@
                                         <input type="text" class="form-control bg-dark text-white border-secondary" id="regSubject" value="การออกแบบและพัฒนาเว็บไซต์เบื้องต้น" readonly>
                                     </div>
                                 </div>
-                                <div class="mb-4">
+                                <div class="mb-3">
                                     <label class="form-label text-sub small"><i class="bi bi-key-fill me-1"></i>ตั้งรหัสผ่าน</label>
                                     <input type="password" class="form-control bg-dark text-white border-secondary" id="regPassword" placeholder="อย่างน้อย 4 ตัวอักษร" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label text-sub small"><i class="bi bi-shield-lock-fill me-1"></i>ยืนยันรหัสผ่านอีกครั้ง</label>
+                                    <input type="password" class="form-control bg-dark text-white border-secondary" id="regConfirmPassword" placeholder="กรอกรหัสผ่านให้ตรงกัน" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label text-sub small"><i class="bi bi-123 me-1"></i>ตั้งรหัส PIN ความปลอดภัย (6 หลัก)</label>
+                                    <input type="password" class="form-control bg-dark text-white border-secondary text-center fs-5 tracking-widest" id="regPin" maxlength="6" pattern="[0-9]{6}" placeholder="------" required title="กรุณากรอกรหัส PIN เป็นตัวเลข 6 หลัก">
+                                    <div class="form-text text-sub" style="font-size: 0.75rem;">ใช้สำหรับยืนยันความปลอดภัยในระบบ (ตัวเลข 6 หลัก)</div>
                                 </div>
                                 <button type="submit" class="btn btn-success w-100 py-2 fw-bold rounded-3">
                                     <i class="bi bi-person-plus-fill me-1"></i> ยืนยันการสมัครสมาชิกนักศึกษา
@@ -137,12 +146,9 @@
             }
 
             let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
-            
-            // ค้นหาผู้ใช้จากรหัสนักศึกษาหรือชื่อบัญชี
             let foundUser = users.find(u => (u.studentId === idOrUser || u.name === idOrUser) && u.password === password);
 
             if (foundUser) {
-                // ถ้าเลือกเข้าแบบ Admin แต่บัญชีนั้นไม่ใช่แอดมิน ให้แจ้งเตือน หรืออนุญาตถ้าตรงเงื่อนไข
                 if (roleType === 'admin' && foundUser.role !== 'admin') {
                     alert('บัญชีนี้ไม่มีสิทธิ์เข้าใช้งานในฐานะแอดมิน!');
                     return;
@@ -153,7 +159,6 @@
                 
                 alert(`ยินดีต้อนรับคุณ ${foundUser.name} (${roleType === 'admin' ? 'Admin' : 'Student'})`);
                 
-                // หากเป็นแอดมิน พาไปหน้าจัดการระบบหลังบ้าน หากเป็นนักศึกษา พาไปหน้าแรก
                 if (roleType === 'admin') {
                     window.location.href = 'admin.html';
                 } else {
@@ -171,6 +176,20 @@
             const group = document.getElementById('regGroup').value.trim();
             const subject = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
             const password = document.getElementById('regPassword').value.trim();
+            const confirmPassword = document.getElementById('regConfirmPassword').value.trim();
+            const pin = document.getElementById('regPin').value.trim();
+
+            // ตรวจสอบว่ารหัสผ่านตรงกันไหม
+            if (password !== confirmPassword) {
+                alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน กรุณาตรวจสอบอีกครั้ง!');
+                return;
+            }
+
+            // ตรวจสอบ PIN 6 หลัก
+            if (pin.length !== 6 || isNaN(pin)) {
+                alert('รหัส PIN ความปลอดภัยต้องเป็นตัวเลข 6 หลักเท่านั้น!');
+                return;
+            }
 
             let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
 
@@ -185,15 +204,16 @@
                 group: group,
                 subject: subject,
                 password: password,
+                pin: pin,
                 status: 'ประเมินเรียบร้อย',
-                role: 'user', // สิทธิ์เป็นนักศึกษาทั่วไป
+                role: 'user',
                 lastScore: 0
             };
 
             users.push(newUser);
             localStorage.setItem('sv_users_db', JSON.stringify(users));
 
-            alert('สมัครสมาชิกนักศึกษาสำเร็จ! กรุณาเข้าสู่ระบบ');
+            alert('สมัครสมาชิกนักศึกษาสำเร็จ! กรุณาเข้าสู่ระบบด้วยรหัสนักศึกษาและรหัสผ่านของคุณ');
             const studentTab = new bootstrap.Tab(document.getElementById('student-login-tab'));
             studentTab.show();
             document.getElementById('studentLoginId').value = studentId;
