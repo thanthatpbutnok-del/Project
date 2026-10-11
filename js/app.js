@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('careerSelect')) {
-        loadProfileCard();
-        switchCareer();
-    }
+    setTimeout(() => {
+        if (document.getElementById('careerSelect')) {
+            loadProfileCard();
+            switchCareer();
+        }
+    }, 100);
 
     if (document.getElementById('resourceCardsGrid')) {
         const urlParams = new URLSearchParams(window.location.search);
@@ -12,26 +14,55 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// ฟังก์ชันบันทึก Activity Logs ของนักศึกษาลง localStorage
+function logStudentActivity(actionType, details) {
+    const currentUser = getCurrentUserSession() || { name: 'นักศึกษาทั่วไป', studentId: 'N/A' };
+    let logs = JSON.parse(localStorage.getItem('sv_activity_logs')) || [];
+    
+    const newLog = {
+        id: Date.now(),
+        studentId: currentUser.studentId,
+        studentName: currentUser.name,
+        action: actionType,
+        details: details,
+        timestamp: new Date().toLocaleString('th-TH')
+    };
+
+    logs.unshift(newLog); // เอาบันทึกล่าสุดขึ้นก่อน
+    if (logs.length > 100) logs.pop(); // เก็บสูงสุด 100 รายการ
+    localStorage.setItem('sv_activity_logs', JSON.stringify(logs));
+}
+
 function loadProfileCard() {
     const currentUser = getCurrentUserSession();
-    if (!currentUser) return;
-
+    
     const nameEl = document.getElementById('displayProfileName');
     const idEl = document.getElementById('displayProfileId');
     const groupEl = document.getElementById('displayProfileGroup');
     const subjectEl = document.getElementById('displayProfileSubject');
     const statusEl = document.getElementById('displayProfileStatus');
 
-    if (nameEl) nameEl.innerText = currentUser.name;
-    if (idEl) idEl.innerText = currentUser.studentId;
-    if (groupEl) groupEl.innerText = currentUser.group;
-    if (subjectEl) subjectEl.innerText = currentUser.subject || "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
-    if (statusEl) statusEl.innerText = currentUser.status || 'ประเมินเรียบร้อย';
+    if (currentUser) {
+        if (nameEl) nameEl.innerText = currentUser.name;
+        if (idEl) idEl.innerText = currentUser.studentId;
+        if (groupEl) groupEl.innerText = currentUser.group;
+        if (subjectEl) subjectEl.innerText = currentUser.subject || "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
+        if (statusEl) statusEl.innerText = currentUser.status || 'ประเมินเรียบร้อย';
+    } else {
+        if (nameEl) nameEl.innerText = "นายฐานฑัต บุตรนอก";
+        if (idEl) idEl.innerText = "6840144204";
+        if (groupEl) groupEl.innerText = "ว.6501";
+        if (subjectEl) subjectEl.innerText = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
+    }
 }
 
 function openEditProfileModal() {
-    const currentUser = getCurrentUserSession();
-    if (!currentUser) return;
+    const currentUser = getCurrentUserSession() || {
+        name: "นายฐานฑัต บุตรนอก",
+        studentId: "6840144204",
+        group: "ว.6501",
+        subject: "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น"
+    };
 
     document.getElementById('modalInputName').value = currentUser.name;
     document.getElementById('modalInputId').value = currentUser.studentId;
@@ -44,24 +75,27 @@ function openEditProfileModal() {
 
 function saveQuickProfile(event) {
     event.preventDefault();
-    const currentUser = getCurrentUserSession();
-    if (!currentUser) return;
+    let currentUser = getCurrentUserSession() || {};
 
     currentUser.name = document.getElementById('modalInputName').value.trim();
     currentUser.studentId = document.getElementById('modalInputId').value.trim();
     currentUser.group = document.getElementById('modalInputGroup').value.trim();
     currentUser.subject = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
+    currentUser.status = "ประเมินเรียบร้อย";
 
     localStorage.setItem('skillverse_user', JSON.stringify(currentUser));
 
     let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
     const index = users.findIndex(u => u.studentId === currentUser.studentId || u.name === currentUser.name);
     if (index !== -1) {
-        users[index] = currentUser;
-        localStorage.setItem('sv_users_db', JSON.stringify(users));
+        users[index] = { ...users[index], ...currentUser };
+    } else {
+        users.push(currentUser);
     }
+    localStorage.setItem('sv_users_db', JSON.stringify(users));
 
     loadProfileCard();
+    logStudentActivity('แก้ไขโปรไฟล์', `อัปเดตข้อมูลเป็น ${currentUser.name} (${currentUser.group})`);
 
     const modalEl = document.getElementById('editProfileModal');
     const modal = bootstrap.Modal.getInstance(modalEl);
@@ -71,9 +105,13 @@ function saveQuickProfile(event) {
 }
 
 function switchCareer() {
-    const lang = getCurrentLang();
-    const key = document.getElementById('careerSelect').value;
+    const lang = typeof getCurrentLang === 'function' ? getCurrentLang() : 'th';
+    const selectEl = document.getElementById('careerSelect');
+    if (!selectEl) return;
+    
+    const key = selectEl.value;
     const currentCareer = careerDataMulti[key];
+    if (!currentCareer) return;
     
     const descBox = document.getElementById('careerDescBox');
     if (descBox) {
@@ -101,9 +139,14 @@ function switchCareer() {
 }
 
 function calculateScore() {
-    const lang = getCurrentLang();
-    const key = document.getElementById('careerSelect').value;
+    const lang = typeof getCurrentLang === 'function' ? getCurrentLang() : 'th';
+    const selectEl = document.getElementById('careerSelect');
+    if (!selectEl) return;
+
+    const key = selectEl.value;
     const currentCareer = careerDataMulti[key];
+    if (!currentCareer) return;
+
     let score = 0;
     let highSkillsCount = 0;
     const summary = document.getElementById('summaryList');
@@ -112,7 +155,7 @@ function calculateScore() {
 
     currentCareer.skills.forEach(skill => {
         const input = document.getElementById(skill.id);
-        const val = input ? parseInt(input.value) : 0;
+        const val = input ? parseInt(input.value) : 50;
         const badgeEl = document.getElementById(`val_${skill.id}`);
         if (badgeEl) badgeEl.innerText = `${val}%`;
         
@@ -144,6 +187,22 @@ function calculateScore() {
         }
     }
 
+    // บันทึกผลประเมินล่าสุดลงบัญชีผู้ใช้
+    let currentUser = getCurrentUserSession();
+    if (currentUser) {
+        currentUser.lastScore = rounded;
+        currentUser.targetCareer = key;
+        localStorage.setItem('skillverse_user', JSON.stringify(currentUser));
+        
+        let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
+        const index = users.findIndex(u => u.studentId === currentUser.studentId);
+        if (index !== -1) {
+            users[index].lastScore = rounded;
+            users[index].targetCareer = key;
+            localStorage.setItem('sv_users_db', JSON.stringify(users));
+        }
+    }
+
     renderBadges(rounded, highSkillsCount);
 }
 
@@ -167,7 +226,10 @@ function renderBadges(score, highSkills) {
 }
 
 function randomScores(type) {
-    const key = document.getElementById('careerSelect').value;
+    const selectEl = document.getElementById('careerSelect');
+    if (!selectEl) return;
+
+    const key = selectEl.value;
     const currentCareer = careerDataMulti[key];
 
     currentCareer.skills.forEach(skill => {
@@ -181,11 +243,15 @@ function randomScores(type) {
         }
     });
     calculateScore();
+    logStudentActivity('ประเมินทักษะ', `ทำสุ่มคะแนนประเภท: ${type}`);
 }
 
 function generateReportModal() {
-    const lang = getCurrentLang();
-    const key = document.getElementById('careerSelect').value;
+    const lang = typeof getCurrentLang === 'function' ? getCurrentLang() : 'th';
+    const selectEl = document.getElementById('careerSelect');
+    if (!selectEl) return;
+
+    const key = selectEl.value;
     const currentCareer = careerDataMulti[key];
     const score = document.getElementById('totalScore').innerText;
     const currentUser = getCurrentUserSession();
@@ -195,19 +261,22 @@ function generateReportModal() {
 
     modalContent.innerHTML = `
         <div class="p-3 rounded-3 bg-dark bg-opacity-50 border border-secondary border-opacity-25 mb-3">
-            <h6 class="text-primary fw-bold mb-2">👤 ผู้ประเมิน: ${currentUser ? currentUser.name : 'นักศึกษา'} (รหัส ${currentUser ? currentUser.studentId : '-'})</h6>
+            <h6 class="text-primary fw-bold mb-2">👤 ผู้ประเมิน: ${currentUser ? currentUser.name : 'นายฐานฑัต บุตรนอก'} (รหัส ${currentUser ? currentUser.studentId : '6840144204'})</h6>
             <p class="mb-1 text-sub">เป้าหมายสายอาชีพ: <strong class="text-white">${currentCareer.title[lang]}</strong></p>
             <p class="mb-0 text-sub">ดัชนีความพร้อมรวม (Readiness Score): <strong class="text-success fs-5">${score}</strong></p>
         </div>
         <p class="text-sub small">คำแนะนำ: ควรฝึกฝนเพิ่มเติมในทักษะที่มีคะแนนต่ำกว่า 70% และศึกษาคอร์สเรียนแนะนำในหน้าคลังสื่อการเรียนรู้เพื่อสร้างพอร์ตโฟลิโอต่อไป</p>
     `;
 
+    logStudentActivity('ออกรายงาน', `สร้างรายงานผลประเมินสายอาชีพ ${key} ได้คะแนน ${score}`);
+
     const reportModal = new bootstrap.Modal(document.getElementById('reportModal'));
     reportModal.show();
 }
 
 function navigateToResources() {
-    const key = document.getElementById('careerSelect').value;
+    const selectEl = document.getElementById('careerSelect');
+    const key = selectEl ? selectEl.value : 'frontend';
     window.location.href = `resources.html?category=${key}`;
 }
 
