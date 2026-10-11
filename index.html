@@ -11,6 +11,7 @@
 </head>
 <body>
 
+    <!-- Header Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark py-3 sticky-top glass-nav">
         <div class="container">
             <a class="navbar-brand fs-3" href="index.html">
@@ -25,9 +26,16 @@
                     <li class="nav-item"><a class="nav-link active" href="index.html" data-i18n="nav_eval">ประเมินทักษะ</a></li>
                     <li class="nav-item"><a class="nav-link" href="roadmap.html" data-i18n="nav_roadmap">แผนโรดแมป</a></li>
                     <li class="nav-item"><a class="nav-link" href="resources.html" data-i18n="nav_resources">คลังสื่อการเรียนรู้</a></li>
+                    <!-- ปุ่ม Smart Attitude -->
                     <li class="nav-item">
                         <a class="btn btn-sm btn-outline-purple rounded-pill px-3" style="border-color: #8b5cf6; color: #c4b5fd;" href="attitude.html">
                             📊 Smart Attitude
+                        </a>
+                    </li>
+                    <!-- ปุ่มมินิเกมฝึกทักษะที่เพิ่มเข้ามาใหม่ -->
+                    <li class="nav-item">
+                        <a class="btn btn-sm btn-outline-success rounded-pill px-3" style="border-color: #10b981; color: #34d399;" href="game.html">
+                            🎮 มินิเกมฝึกทักษะ
                         </a>
                     </li>
                     <li class="nav-item" id="adminNavItem" style="display:none;"><a class="nav-link text-warning fw-bold" href="admin.html" data-i18n="nav_admin">จัดการระบบ (Admin)</a></li>
@@ -36,8 +44,10 @@
         </div>
     </nav>
 
+    <!-- Main Content -->
     <div class="container py-5">
         
+        <!-- User Profile Card -->
         <div class="glass-card p-4 mb-4">
             <div class="row align-items-center justify-content-between">
                 <div class="col-md-8 d-flex align-items-center gap-3">
@@ -76,6 +86,7 @@
         </div>
 
         <div class="row g-4">
+            <!-- Left Panel -->
             <div class="col-lg-7">
                 <div class="glass-card p-4">
                     <h4 class="fw-bold mb-3"><i class="bi bi-sliders me-2 text-primary"></i><span data-i18n="select_career_label">เลือกสายอาชีพและประเมินตนเอง</span></h4>
@@ -90,6 +101,7 @@
                 </div>
             </div>
 
+            <!-- Right Panel -->
             <div class="col-lg-5">
                 <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
                     <div>
@@ -104,6 +116,7 @@
                             <div id="evaluationStatus" class="mt-2 text-sub small">กำลังประมวลผล...</div>
                         </div>
 
+                        <!-- Achievement Badges -->
                         <div class="mb-4">
                             <h6 class="fw-bold text-sub mb-2"><i class="bi bi-award-fill me-1 text-warning"></i>สถานะสมรรถนะพิเศษ (Badges)</h6>
                             <div class="d-flex flex-wrap gap-2" id="badgeContainer"></div>
@@ -113,6 +126,7 @@
                         <ul class="list-group list-group-flush rounded-3" id="summaryList"></ul>
                     </div>
 
+                    <!-- CTA Connection Buttons & Modal Trigger -->
                     <div class="mt-4 d-grid gap-2">
                         <button class="btn btn-custom py-2" onclick="generateReportModal()">
                             <i class="bi bi-file-earmark-text-fill me-2"></i>สร้างรายงานสรุปและคำแนะนำเชิงลึก
@@ -126,7 +140,7 @@
         </div>
     </div>
 
-    <!-- Modal แก้ไขข้อมูลส่วนตัว -->
+    <!-- Modal สำหรับแก้ไขข้อมูลส่วนตัว -->
     <div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content glass-card text-white border-secondary">
@@ -162,7 +176,7 @@
         </div>
     </div>
 
-    <!-- Modal รายงานสรุป -->
+    <!-- Modal for Detailed Report -->
     <div class="modal fade" id="reportModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content glass-card text-white border-secondary">
