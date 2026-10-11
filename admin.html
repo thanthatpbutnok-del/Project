@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkillVerse - Admin Management</title>
+    <title>SkillVerse - Admin & Faculty Backend Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,51 +11,193 @@
 </head>
 <body>
 
+    <!-- Header Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark py-3 sticky-top glass-nav">
         <div class="container">
             <a class="navbar-brand fs-3" href="index.html">
-                <i class="bi bi-rocket-takeoff-fill me-2 text-gradient"></i>SkillVerse Admin
+                <i class="bi bi-shield-lock-fill me-2 text-warning"></i>SkillVerse <span class="badge bg-warning text-dark fs-6 ms-1">Admin Portal</span>
             </a>
             <div class="d-flex align-items-center gap-2">
-                <button class="btn lang-btn" id="langToggleBtn" onclick="toggleLanguage()">🌐 EN</button>
-                <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="logout()"><i class="bi bi-box-arrow-right me-1"></i><span data-i18n="logout">ออกจากระบบ</span></button>
+                <a href="index.html" class="btn btn-outline-light btn-sm rounded-pill px-3"><i class="bi bi-house-door me-1"></i> กลับหน้าหลัก</a>
+                <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="logout()"><i class="bi bi-box-arrow-right me-1"></i> ออกจากระบบ</button>
             </div>
         </div>
     </nav>
 
+    <!-- Main Admin Container -->
     <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="glass-card p-4">
-                    <h3 class="fw-bold text-warning mb-3"><i class="bi bi-shield-lock-fill me-2"></i>แผงควบคุมผู้ดูแลระบบ (Admin Panel)</h3>
-                    <p class="text-sub small mb-4">แก้ไขและจัดการข้อมูลส่วนตัวที่แสดงบนหน้าแรกของระบบ</p>
+        
+        <!-- Header Title -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold text-white mb-1">ระบบหลังบ้านผู้ดูแลระบบ & อาจารย์ผู้สอน</h2>
+                <p class="text-sub mb-0">ติดตามผลประเมิน จัดการรายชื่อนักศึกษา และตรวจเช็ค Activity Logs ในระบบ</p>
+            </div>
+            <div>
+                <button class="btn btn-outline-warning rounded-pill px-3 btn-sm" onclick="seedSampleData()">
+                    <i class="bi bi-database-add me-1"></i> เพิ่มข้อมูลนักศึกษาตัวอย่าง
+                </button>
+            </div>
+        </div>
 
-                    <form id="editProfileForm" onsubmit="handleSaveProfile(event)">
+        <!-- Metric Stat Cards -->
+        <div class="row g-3 mb-5">
+            <div class="col-md-3">
+                <div class="glass-card p-3 d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-primary bg-opacity-25 text-primary p-3 fs-3">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-sub small">จำนวนนักศึกษาในระบบ</div>
+                        <h3 class="fw-bold text-white mb-0" id="statTotalStudents">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-3 d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-success bg-opacity-25 text-success p-3 fs-3">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div>
+                        <div class="text-sub small">ประเมินแล้ว</div>
+                        <h3 class="fw-bold text-white mb-0" id="statEvaluatedCount">0</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-3 d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-info bg-opacity-25 text-info p-3 fs-3">
+                        <i class="bi bi-graph-up me-1"></i>
+                    </div>
+                    <div>
+                        <div class="text-sub small">คะแนนเฉลี่ยรวม</div>
+                        <h3 class="fw-bold text-white mb-0" id="statAvgScore">0%</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-3 d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-warning bg-opacity-25 text-warning p-3 fs-3">
+                        <i class="bi bi-activity"></i>
+                    </div>
+                    <div>
+                        <div class="text-sub small">การเคลื่อนไหวทั้งหมด</div>
+                        <h3 class="fw-bold text-white mb-0" id="statTotalLogs">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nav Tabs for Student Table & Logs -->
+        <ul class="nav nav-tabs nav-pills border-bottom-0 mb-4 gap-2" id="adminTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active rounded-pill px-4 text-white" id="students-tab" data-bs-toggle="pill" data-bs-target="#students-panel" type="button" role="tab">
+                    <i class="bi bi-person-lines-fill me-2"></i>รายชื่อนักศึกษา & ผลประเมิน
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-pill px-4 text-white" id="logs-tab" data-bs-toggle="pill" data-bs-target="#logs-panel" type="button" role="tab">
+                    <i class="bi bi-clock-history me-2"></i>Activity Logs (ประวัติการเคลื่อนไหว)
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="adminTabContent">
+            
+            <!-- Panel 1: Student Management Table -->
+            <div class="tab-pane fade show active" id="students-panel" role="tabpanel">
+                <div class="glass-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-white mb-0"><i class="bi bi-table me-2 text-primary"></i>ตารางจัดการข้อมูลนักศึกษา</h5>
+                        <input type="text" class="form-control form-control-sm bg-dark text-white border-secondary w-25" id="searchStudentInput" placeholder="🔍 ค้นหานามสกุล / รหัส..." onkeyup="filterStudentsTable()">
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0" id="studentsTable">
+                            <thead class="table-secondary text-sub">
+                                <tr>
+                                    <th>รหัสนักศึกษา</th>
+                                    <th>ชื่อ - นามสกุล</th>
+                                    <th>หมู่เรียน</th>
+                                    <th>สายอาชีพเป้าหมาย</th>
+                                    <th>ผลประเมินล่าสุด</th>
+                                    <th>สถานะ</th>
+                                    <th class="text-end">การจัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <!-- Rendered with JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 2: Activity Logs Table -->
+            <div class="tab-pane fade" id="logs-panel" role="tabpanel">
+                <div class="glass-card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold text-white mb-0"><i class="bi bi-list-stars me-2 text-warning"></i>บันทึกกิจกรรมและการเคลื่อนไหวในระบบ</h5>
+                        <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="clearLogs()">
+                            <i class="bi bi-trash-fill me-1"></i> ล้างประวัติทั้งหมด
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover align-middle mb-0">
+                            <thead class="table-secondary text-sub">
+                                <tr>
+                                    <th>เวลา</th>
+                                    <th>รหัส/ชื่อนักศึกษา</th>
+                                    <th>กิจกรรม (Action)</th>
+                                    <th>รายละเอียด</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                <!-- Rendered with JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Modal แก้ไขข้อมูลนักศึกษาโดย Admin -->
+    <div class="modal fade" id="adminEditStudentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card text-white border-secondary">
+                <div class="modal-header border-bottom border-secondary border-opacity-25">
+                    <h5 class="modal-title fw-bold text-warning"><i class="bi bi-pencil-square me-2"></i>แก้ไขข้อมูลนักศึกษา</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminEditStudentForm" onsubmit="saveAdminEditStudent(event)">
+                        <input type="hidden" id="editOriginalId">
                         <div class="mb-3">
-                            <label class="form-label text-sub">ชื่อ - นามสกุล</label>
-                            <input type="text" class="form-control bg-dark text-white border-secondary" id="inputName" required>
+                            <label class="form-label text-sub small">รหัสนักศึกษา</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="editStudentId" required>
                         </div>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label text-sub">รหัสนักศึกษา</label>
-                                <input type="text" class="form-control bg-dark text-white border-secondary" id="inputId" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label text-sub">หมู่เรียน</label>
-                                <input type="text" class="form-control bg-dark text-white border-secondary" id="inputGroup" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label text-sub">รายวิชา</label>
-                                <input type="text" class="form-control bg-dark text-white border-secondary" id="inputSubject" value="การออกแบบและพัฒนาเว็บไซต์เบื้องต้น" readonly>
-                            </div>
+                        <div class="mb-3">
+                            <label class="form-label text-sub small">ชื่อ - นามสกุล</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="editStudentName" required>
                         </div>
-                        <div class="mb-4">
-                            <label class="form-label text-sub">สถานะประเมิน</label>
-                            <input type="text" class="form-control bg-dark text-white border-secondary" id="inputStatus" required>
+                        <div class="mb-3">
+                            <label class="form-label text-sub small">หมู่เรียน</label>
+                            <input type="text" class="form-control bg-dark text-white border-secondary" id="editStudentGroup" required>
                         </div>
-                        <div class="d-flex justify-content-end gap-2">
-                            <a href="index.html" class="btn btn-outline-light rounded-pill px-4">กลับหน้าหลัก</a>
-                            <button type="submit" class="btn btn-custom rounded-pill px-4">บันทึกข้อมูล</button>
+                        <div class="mb-3">
+                            <label class="form-label text-sub small">สถานะการประเมิน</label>
+                            <select class="form-select bg-dark text-white border-secondary" id="editStudentStatus">
+                                <option value="ประเมินเรียบร้อย">ประเมินเรียบร้อย</option>
+                                <option value="ยังไม่ได้ประเมิน">ยังไม่ได้ประเมิน</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
+                            <button type="submit" class="btn btn-warning rounded-pill px-4 fw-bold">บันทึกการแก้ไข</button>
                         </div>
                     </form>
                 </div>
@@ -67,43 +209,149 @@
     <script src="js/i18n.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('skillverse_role') !== 'admin') {
-                alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้!');
-                window.location.href = 'index.html';
-                return;
-            }
-            const user = getCurrentUserSession();
-            if (user) {
-                document.getElementById('inputName').value = user.name;
-                document.getElementById('inputId').value = user.studentId;
-                document.getElementById('inputGroup').value = user.group;
-                document.getElementById('inputSubject').value = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
-                document.getElementById('inputStatus').value = user.status || 'ประเมินเรียบร้อย';
-            }
+            renderAdminDashboard();
         });
 
-        function handleSaveProfile(event) {
-            event.preventDefault();
-            const user = getCurrentUserSession();
+        function renderAdminDashboard() {
+            const users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
+            const logs = JSON.parse(localStorage.getItem('sv_activity_logs')) || [];
+
+            // 1. Render Stats
+            document.getElementById('statTotalStudents').innerText = users.length;
+            const evalCount = users.filter(u => u.status === 'ประเมินเรียบร้อย' || u.lastScore !== undefined).length;
+            document.getElementById('statEvaluatedCount').innerText = evalCount;
+
+            const scores = users.filter(u => u.lastScore !== undefined).map(u => u.lastScore);
+            const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+            document.getElementById('statAvgScore').innerText = `${avg}%`;
+            document.getElementById('statTotalLogs').innerText = logs.length;
+
+            // 2. Render Students Table
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+
+            users.forEach((u, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold text-info">${u.studentId}</td>
+                    <td>${u.name} ${u.role === 'admin' ? '<span class="badge bg-warning text-dark ms-1">Admin</span>' : ''}</td>
+                    <td>${u.group || '-'}</td>
+                    <td><span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25">${u.targetCareer ? u.targetCareer.toUpperCase() : 'FRONTEND'}</span></td>
+                    <td class="fw-bold ${u.lastScore >= 80 ? 'text-success' : 'text-warning'}">${u.lastScore !== undefined ? u.lastScore + '%' : 'ยังไม่ประเมิน'}</td>
+                    <td><span class="badge ${u.status === 'ประเมินเรียบร้อย' ? 'bg-success' : 'bg-secondary'}">${u.status || 'รอดำเนินการ'}</span></td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-warning rounded-pill me-1" onclick="openAdminEditModal('${u.studentId}')">
+                            <i class="bi bi-pencil-fill"></i> แก้ไข
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="deleteStudent('${u.studentId}')">
+                            <i class="bi bi-trash-fill"></i> ลบ
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // 3. Render Logs Table
+            const logsBody = document.getElementById('logsTableBody');
+            logsBody.innerHTML = '';
+
+            if (logs.length === 0) {
+                logsBody.innerHTML = '<tr><td colspan="4" class="text-center text-sub py-4">ยังไม่มีประวัติการเคลื่อนไหวในระบบ</td></tr>';
+            } else {
+                logs.forEach(l => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="text-sub small">${l.timestamp}</td>
+                        <td class="fw-bold text-white">${l.studentName} <small class="text-sub">(${l.studentId})</small></td>
+                        <td><span class="badge bg-info bg-opacity-25 text-info border border-info border-opacity-25">${l.action}</span></td>
+                        <td class="text-sub small">${l.details}</td>
+                    `;
+                    logsBody.appendChild(tr);
+                });
+            }
+        }
+
+        function filterStudentsTable() {
+            const query = document.getElementById('searchStudentInput').value.toLowerCase();
+            const rows = document.querySelectorAll('#studentsTableBody tr');
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        function openAdminEditModal(studentId) {
+            const users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
+            const user = users.find(u => u.studentId === studentId);
             if (!user) return;
 
-            user.name = document.getElementById('inputName').value;
-            user.studentId = document.getElementById('inputId').value;
-            user.group = document.getElementById('inputGroup').value;
-            user.subject = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
-            user.status = document.getElementById('inputStatus').value;
+            document.getElementById('editOriginalId').value = user.studentId;
+            document.getElementById('editStudentId').value = user.studentId;
+            document.getElementById('editStudentName').value = user.name;
+            document.getElementById('editStudentGroup').value = user.group || '';
+            document.getElementById('editStudentStatus').value = user.status || 'ประเมินเรียบร้อย';
 
-            localStorage.setItem('skillverse_user', JSON.stringify(user));
+            const modal = new bootstrap.Modal(document.getElementById('adminEditStudentModal'));
+            modal.show();
+        }
+
+        function saveAdminEditStudent(event) {
+            event.preventDefault();
+            const origId = document.getElementById('editOriginalId').value;
+            let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
+
+            const index = users.findIndex(u => u.studentId === origId);
+            if (index !== -1) {
+                users[index].studentId = document.getElementById('editStudentId').value.trim();
+                users[index].name = document.getElementById('editStudentName').value.trim();
+                users[index].group = document.getElementById('editStudentGroup').value.trim();
+                users[index].status = document.getElementById('editStudentStatus').value;
+
+                localStorage.setItem('sv_users_db', JSON.stringify(users));
+                
+                // ถ้านักศึกษาที่แก้อยู่คือสิทธิ์ปัจจุบัน ให้อัปเดต session ด้วย
+                const current = JSON.parse(localStorage.getItem('skillverse_user'));
+                if (current && current.studentId === origId) {
+                    localStorage.setItem('skillverse_user', JSON.stringify(users[index]));
+                }
+
+                alert('แก้ไขข้อมูลนักศึกษาสำเร็จ!');
+                renderAdminDashboard();
+
+                const modalEl = document.getElementById('adminEditStudentModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+            }
+        }
+
+        function deleteStudent(studentId) {
+            if (!confirm(`คุณต้องการลบนักศึกษารหัส ${studentId} ออกจากระบบใช่หรือไม่?`)) return;
 
             let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
-            const index = users.findIndex(u => u.studentId === user.studentId || u.name === user.name);
-            if (index !== -1) {
-                users[index] = user;
-                localStorage.setItem('sv_users_db', JSON.stringify(users));
-            }
+            users = users.filter(u => u.studentId !== studentId);
+            localStorage.setItem('sv_users_db', JSON.stringify(users));
 
-            alert('บันทึกข้อมูลเรียบร้อยแล้ว!');
-            window.location.href = 'index.html';
+            alert('ลบข้อมูลนักศึกษาเรียบร้อยแล้ว!');
+            renderAdminDashboard();
+        }
+
+        function seedSampleData() {
+            const sampleUsers = [
+                { studentId: '6840144204', name: 'นายฐานฑัต บุตรนอก', group: 'ว.6501', status: 'ประเมินเรียบร้อย', lastScore: 85, targetCareer: 'frontend', role: 'admin' },
+                { studentId: '6840144205', name: 'นายสมชาย สายโค้ด', group: 'ว.6501', status: 'ประเมินเรียบร้อย', lastScore: 72, targetCareer: 'backend', role: 'user' },
+                { studentId: '6840144206', name: 'นางสาววิภา ดีไซน์', group: 'ว.6502', status: 'ประเมินเรียบร้อย', lastScore: 90, targetCareer: 'uiux', role: 'user' }
+            ];
+            localStorage.setItem('sv_users_db', JSON.stringify(sampleUsers));
+            alert('เพิ่มข้อมูลนักศึกษาจำลองเรียบร้อยแล้ว!');
+            renderAdminDashboard();
+        }
+
+        function clearLogs() {
+            if (confirm('คุณต้องการล้าง Activity Logs ทั้งหมดใช่หรือไม่?')) {
+                localStorage.removeItem('sv_activity_logs');
+                renderAdminDashboard();
+            }
         }
     </script>
 </body>
