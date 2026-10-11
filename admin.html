@@ -31,7 +31,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h2 class="fw-bold text-white mb-1">ระบบหลังบ้านผู้ดูแลระบบ & อาจารย์ผู้สอน</h2>
-                <p class="text-sub mb-0">ติดตามผลประเมิน จัดการรายชื่อนักศึกษา และตรวจเช็ค Activity Logs ในระบบ</p>
+                <p class="text-sub mb-0">ติดตามผลประเมิน จัดการรายชื่อนักศึกษา รีเซ็ตรหัสผ่าน และตรวจเช็ค Activity Logs</p>
             </div>
             <div>
                 <button class="btn btn-outline-warning rounded-pill px-3 btn-sm" onclick="seedSampleData()">
@@ -88,7 +88,7 @@
             </div>
         </div>
 
-        <!-- Nav Tabs for Student Table & Logs -->
+        <!-- Nav Tabs -->
         <ul class="nav nav-tabs nav-pills border-bottom-0 mb-4 gap-2" id="adminTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active rounded-pill px-4 text-white" id="students-tab" data-bs-toggle="pill" data-bs-target="#students-panel" type="button" role="tab">
@@ -119,10 +119,9 @@
                                     <th>รหัสนักศึกษา</th>
                                     <th>ชื่อ - นามสกุล</th>
                                     <th>หมู่เรียน</th>
-                                    <th>สายอาชีพเป้าหมาย</th>
-                                    <th>ผลประเมินล่าสุด</th>
+                                    <th>ผลประเมิน</th>
                                     <th>สถานะ</th>
-                                    <th class="text-end">การจัดการ</th>
+                                    <th class="text-end">การจัดการ / ความปลอดภัย</th>
                                 </tr>
                             </thead>
                             <tbody id="studentsTableBody">
@@ -165,7 +164,38 @@
 
     </div>
 
-    <!-- Modal แก้ไขข้อมูลนักศึกษาโดย Admin -->
+    <!-- Modal จำลองอีเมลรีเซ็ตรหัสผ่านให้นักศึกษา -->
+    <div class="modal fade" id="resetEmailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card text-white border-info">
+                <div class="modal-header border-bottom border-secondary border-opacity-25 bg-info bg-opacity-10">
+                    <h5 class="modal-title fw-bold text-info"><i class="bi bi-envelope-at-fill me-2"></i>จำลองกล่องข้อความอีเมลนักศึกษา</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="p-3 bg-dark rounded-3 border border-secondary border-opacity-25 mb-3">
+                        <p class="mb-1 text-sub small"><strong>ถึง:</strong> <span id="emailTargetStudent" class="text-info">student@university.ac.th</span></p>
+                        <p class="mb-0 text-sub small"><strong>เรื่อง:</strong> แจ้งเตือนการยืนยันการขอรีเซ็ตรหัสผ่านบัญชี SkillVerse</p>
+                    </div>
+
+                    <div class="p-4 rounded-3 text-center bg-dark bg-opacity-50 border border-secondary border-opacity-25">
+                        <i class="bi bi-shield-exclamation text-warning display-4 mb-2"></i>
+                        <h5 class="fw-bold text-white mb-2">คุณต้องการรีเซ็ตรหัสผ่านหรือไม่?</h5>
+                        <p class="text-sub small mb-4">อาจารย์ผู้สอนได้ทำการส่งคำขอรีเซ็ตรหัสผ่านสำหรับบัญชีของคุณ หากคุณเป็นผู้แจ้งลืมรหัสผ่าน กรุณากดปุ่มตกลงด้านล่างเพื่อยืนยันการตั้งรหัสใหม่เป็น <strong>1234</strong></p>
+                        
+                        <button type="button" class="btn btn-success rounded-pill px-5 py-2 fw-bold" onclick="confirmResetPasswordByEmail()">
+                            <i class="bi bi-check-circle-fill me-1"></i> ตกลง ยืนยันการรีเซ็ตรหัสผ่าน
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-secondary border-opacity-25">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal แก้ไขข้อมูลนักศึกษา -->
     <div class="modal fade" id="adminEditStudentModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content glass-card text-white border-secondary">
@@ -208,6 +238,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/i18n.js"></script>
     <script>
+        let currentTargetStudentId = null;
+
         document.addEventListener('DOMContentLoaded', () => {
             renderAdminDashboard();
         });
@@ -216,7 +248,6 @@
             const users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
             const logs = JSON.parse(localStorage.getItem('sv_activity_logs')) || [];
 
-            // 1. Render Stats
             document.getElementById('statTotalStudents').innerText = users.length;
             const evalCount = users.filter(u => u.status === 'ประเมินเรียบร้อย' || u.lastScore !== undefined).length;
             document.getElementById('statEvaluatedCount').innerText = evalCount;
@@ -226,20 +257,21 @@
             document.getElementById('statAvgScore').innerText = `${avg}%`;
             document.getElementById('statTotalLogs').innerText = logs.length;
 
-            // 2. Render Students Table
             const tbody = document.getElementById('studentsTableBody');
             tbody.innerHTML = '';
 
-            users.forEach((u, idx) => {
+            users.forEach((u) => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td class="fw-bold text-info">${u.studentId}</td>
                     <td>${u.name} ${u.role === 'admin' ? '<span class="badge bg-warning text-dark ms-1">Admin</span>' : ''}</td>
                     <td>${u.group || '-'}</td>
-                    <td><span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25">${u.targetCareer ? u.targetCareer.toUpperCase() : 'FRONTEND'}</span></td>
                     <td class="fw-bold ${u.lastScore >= 80 ? 'text-success' : 'text-warning'}">${u.lastScore !== undefined ? u.lastScore + '%' : 'ยังไม่ประเมิน'}</td>
                     <td><span class="badge ${u.status === 'ประเมินเรียบร้อย' ? 'bg-success' : 'bg-secondary'}">${u.status || 'รอดำเนินการ'}</span></td>
                     <td class="text-end">
+                        <button class="btn btn-sm btn-outline-info rounded-pill me-1" onclick="sendResetEmail('${u.studentId}', '${u.name}')">
+                            <i class="bi bi-envelope-paper-fill"></i> รีเซ็ตรหัสผ่าน
+                        </button>
                         <button class="btn btn-sm btn-outline-warning rounded-pill me-1" onclick="openAdminEditModal('${u.studentId}')">
                             <i class="bi bi-pencil-fill"></i> แก้ไข
                         </button>
@@ -251,7 +283,6 @@
                 tbody.appendChild(tr);
             });
 
-            // 3. Render Logs Table
             const logsBody = document.getElementById('logsTableBody');
             logsBody.innerHTML = '';
 
@@ -268,6 +299,49 @@
                     `;
                     logsBody.appendChild(tr);
                 });
+            }
+        }
+
+        // ส่งคำขอรีเซ็ตรหัสผ่านไปยังอีเมลนักศึกษา
+        function sendResetEmail(studentId, studentName) {
+            currentTargetStudentId = studentId;
+            document.getElementById('emailTargetStudent').innerText = `${studentName} (${studentId}@student.ac.th)`;
+            
+            const modal = new bootstrap.Modal(document.getElementById('resetEmailModal'));
+            modal.show();
+        }
+
+        // เมื่อนักศึกษากด "ตกลง ยืนยันการรีเซ็ตรหัสผ่าน" ในอีเมล
+        function confirmResetPasswordByEmail() {
+            if (!currentTargetStudentId) return;
+
+            let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
+            const index = users.findIndex(u => u.studentId === currentTargetStudentId);
+
+            if (index !== -1) {
+                users[index].password = '1234'; // คืนค่ารหัสผ่านเริ่มต้นเป็น 1234
+                users[index].pin = '123456';    // คืนค่า PIN เป็น 123456
+                localStorage.setItem('sv_users_db', JSON.stringify(users));
+
+                // บันทึก Activity Log
+                let logs = JSON.parse(localStorage.getItem('sv_activity_logs')) || [];
+                logs.unshift({
+                    id: Date.now(),
+                    studentId: currentTargetStudentId,
+                    studentName: users[index].name,
+                    action: 'รีเซ็ตรหัสผ่าน',
+                    details: 'ยืนยันการรีเซ็ตรหัสผ่านผ่านทางอีเมลสำเร็จ (รหัสใหม่: 1234)',
+                    timestamp: new Date().toLocaleString('th-TH')
+                });
+                localStorage.setItem('sv_activity_logs', JSON.stringify(logs));
+
+                alert(`การรีเซ็ตรหัสผ่านสำเร็จ!\nรหัสผ่านสำหรับรหัส ${currentTargetStudentId} ได้เปลี่ยนเป็น "1234" เรียบร้อยแล้ว`);
+                
+                const modalEl = document.getElementById('resetEmailModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+
+                renderAdminDashboard();
             }
         }
 
@@ -309,12 +383,6 @@
                 users[index].status = document.getElementById('editStudentStatus').value;
 
                 localStorage.setItem('sv_users_db', JSON.stringify(users));
-                
-                // ถ้านักศึกษาที่แก้อยู่คือสิทธิ์ปัจจุบัน ให้อัปเดต session ด้วย
-                const current = JSON.parse(localStorage.getItem('skillverse_user'));
-                if (current && current.studentId === origId) {
-                    localStorage.setItem('skillverse_user', JSON.stringify(users[index]));
-                }
 
                 alert('แก้ไขข้อมูลนักศึกษาสำเร็จ!');
                 renderAdminDashboard();
@@ -338,9 +406,9 @@
 
         function seedSampleData() {
             const sampleUsers = [
-                { studentId: '6840144204', name: 'นายฐานฑัต บุตรนอก', group: 'ว.6501', status: 'ประเมินเรียบร้อย', lastScore: 85, targetCareer: 'frontend', role: 'admin' },
-                { studentId: '6840144205', name: 'นายสมชาย สายโค้ด', group: 'ว.6501', status: 'ประเมินเรียบร้อย', lastScore: 72, targetCareer: 'backend', role: 'user' },
-                { studentId: '6840144206', name: 'นางสาววิภา ดีไซน์', group: 'ว.6502', status: 'ประเมินเรียบร้อย', lastScore: 90, targetCareer: 'uiux', role: 'user' }
+                { studentId: '6840144204', name: 'นายฐานฑัต บุตรนอก', group: 'ว.6501', status: 'ประเมินเรียบร้อย', lastScore: 85, password: '1234', role: 'admin' },
+                { studentId: '6840144205', name: 'นายสมชาย สายโค้ด', group: 'ว.6501', status: 'ประเมินเรียบร้อย', lastScore: 72, password: '1234', role: 'user' },
+                { studentId: '6840144206', name: 'นางสาววิภา ดีไซน์', group: 'ว.6502', status: 'ประเมินเรียบร้อย', lastScore: 90, password: '1234', role: 'user' }
             ];
             localStorage.setItem('sv_users_db', JSON.stringify(sampleUsers));
             alert('เพิ่มข้อมูลนักศึกษาจำลองเรียบร้อยแล้ว!');
