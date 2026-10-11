@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ฟังก์ชันบันทึก Activity Logs ของนักศึกษาลง localStorage
 function logStudentActivity(actionType, details) {
     const currentUser = getCurrentUserSession() || { name: 'นักศึกษาทั่วไป', studentId: 'N/A' };
     let logs = JSON.parse(localStorage.getItem('sv_activity_logs')) || [];
@@ -28,8 +27,8 @@ function logStudentActivity(actionType, details) {
         timestamp: new Date().toLocaleString('th-TH')
     };
 
-    logs.unshift(newLog); // เอาบันทึกล่าสุดขึ้นก่อน
-    if (logs.length > 100) logs.pop(); // เก็บสูงสุด 100 รายการ
+    logs.unshift(newLog);
+    if (logs.length > 100) logs.pop();
     localStorage.setItem('sv_activity_logs', JSON.stringify(logs));
 }
 
@@ -45,13 +44,13 @@ function loadProfileCard() {
     if (currentUser) {
         if (nameEl) nameEl.innerText = currentUser.name;
         if (idEl) idEl.innerText = currentUser.studentId;
-        if (groupEl) groupEl.innerText = currentUser.group;
+        if (groupEl) groupEl.innerText = currentUser.group || 'ค.6814';
         if (subjectEl) subjectEl.innerText = currentUser.subject || "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
         if (statusEl) statusEl.innerText = currentUser.status || 'ประเมินเรียบร้อย';
     } else {
         if (nameEl) nameEl.innerText = "นายฐานฑัต บุตรนอก";
         if (idEl) idEl.innerText = "6840144204";
-        if (groupEl) groupEl.innerText = "ว.6501";
+        if (groupEl) groupEl.innerText = "ค.6814";
         if (subjectEl) subjectEl.innerText = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
     }
 }
@@ -60,13 +59,15 @@ function openEditProfileModal() {
     const currentUser = getCurrentUserSession() || {
         name: "นายฐานฑัต บุตรนอก",
         studentId: "6840144204",
-        group: "ว.6501",
+        email: "thanthatpbutnok@gmail.com",
+        group: "ค.6814",
         subject: "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น"
     };
 
-    document.getElementById('modalInputName').value = currentUser.name;
-    document.getElementById('modalInputId').value = currentUser.studentId;
-    document.getElementById('modalInputGroup').value = currentUser.group;
+    document.getElementById('modalInputName').value = currentUser.name || '';
+    document.getElementById('modalInputId').value = currentUser.studentId || '';
+    document.getElementById('modalInputEmail').value = currentUser.email || '';
+    document.getElementById('modalInputGroup').value = currentUser.group || '';
     document.getElementById('modalInputSubject').value = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
 
     const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
@@ -79,6 +80,7 @@ function saveQuickProfile(event) {
 
     currentUser.name = document.getElementById('modalInputName').value.trim();
     currentUser.studentId = document.getElementById('modalInputId').value.trim();
+    currentUser.email = document.getElementById('modalInputEmail').value.trim();
     currentUser.group = document.getElementById('modalInputGroup').value.trim();
     currentUser.subject = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
     currentUser.status = "ประเมินเรียบร้อย";
@@ -95,13 +97,13 @@ function saveQuickProfile(event) {
     localStorage.setItem('sv_users_db', JSON.stringify(users));
 
     loadProfileCard();
-    logStudentActivity('แก้ไขโปรไฟล์', `อัปเดตข้อมูลเป็น ${currentUser.name} (${currentUser.group})`);
+    logStudentActivity('แก้ไขโปรไฟล์', `อัปเดตข้อมูลเป็น ${currentUser.name} (อีเมล: ${currentUser.email || 'ไม่ได้ระบุ'})`);
 
     const modalEl = document.getElementById('editProfileModal');
     const modal = bootstrap.Modal.getInstance(modalEl);
     if (modal) modal.hide();
 
-    alert('อัปเดตข้อมูลส่วนตัวเรียบร้อยแล้ว!');
+    alert('อัปเดตข้อมูลส่วนตัวและอีเมลเรียบร้อยแล้ว!');
 }
 
 function switchCareer() {
@@ -187,7 +189,6 @@ function calculateScore() {
         }
     }
 
-    // บันทึกผลประเมินล่าสุดลงบัญชีผู้ใช้
     let currentUser = getCurrentUserSession();
     if (currentUser) {
         currentUser.lastScore = rounded;
