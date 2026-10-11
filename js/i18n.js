@@ -51,7 +51,7 @@ function initDatabase() {
             {
                 studentId: '6840144204',
                 name: 'นายฐานฑัต บุตรนอก',
-                group: 'ว.6501',
+                group: 'ค.6814',
                 subject: 'การออกแบบและพัฒนาเว็บไซต์เบื้องต้น',
                 password: '1234',
                 status: 'ประเมินเรียบร้อย',
