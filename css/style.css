@@ -1,0 +1,127 @@
+:root {
+    --bg-color: #090d16 !important;
+    --card-bg: rgba(18, 24, 38, 0.85) !important;
+    --border-color: rgba(255, 255, 255, 0.15) !important;
+    --accent-blue: #3b82f6;
+    --accent-teal: #10b981;
+    --accent-purple: #8b5cf6;
+    --text-main: #f8fafc !important;
+    --text-sub: #94a3b8 !important;
+}
+
+html, body {
+    background-color: var(--bg-color) !important;
+    color: var(--text-main) !important;
+    font-family: 'Prompt', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.12) 0%, transparent 40%) !important;
+}
+
+/* Glassmorphic Navigation Bar */
+.glass-nav {
+    background: rgba(9, 13, 22, 0.9) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-link {
+    color: var(--text-sub) !important;
+    transition: color 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--accent-teal) !important;
+}
+
+/* Glass Card */
+.glass-card {
+    background: var(--card-bg) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color) !important;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    color: var(--text-main) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #60a5fa, #34d399);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.btn-custom {
+    background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+    color: white !important;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+.skill-badge {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.lang-btn {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa !important;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.lang-btn:hover {
+    background: rgba(59, 130, 246, 0.3);
+    color: white !important;
+}
+
+.timeline-step {
+    border-left: 2px solid var(--accent-blue);
+    padding-left: 20px;
+    position: relative;
+    margin-bottom: 30px;
+}
+.timeline-step::before {
+    content: '';
+    position: absolute;
+    left: -9px;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-teal);
+}
+
+h1, h2, h3, h4, h5, h6, .text-white {
+    color: #f8fafc !important;
+}
+
+.text-sub {
+    color: #94a3b8 !important;
+}
