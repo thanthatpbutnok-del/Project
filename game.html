@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillVerse - Web Dev Battle Game</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark py-3 sticky-top glass-nav">
+        <div class="container">
+            <a class="navbar-brand fs-3" href="index.html">
+                <i class="bi bi-rocket-takeoff-fill me-2 text-gradient"></i>SkillVerse
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="index.html" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i> กลับหน้าหลัก
+                </a>
+                <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="logout()"><i class="bi bi-box-arrow-right me-1"></i> ออกจากระบบ</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Game Container -->
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                
+                <!-- Game Header Banner -->
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-gradient"><i class="bi bi-controller me-2"></i>SkillVerse Quest: Web Battle</h2>
+                    <p class="text-sub">เกมฝึกทักษะตอบคำถาม: การออกแบบและพัฒนาเว็บไซต์เบื้องต้น</p>
+                </div>
+
+                <!-- Game Arena Card -->
+                <div class="glass-card p-4 p-md-5 position-relative overflow-hidden">
+                    
+                    <!-- Score & Stage Info -->
+                    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom border-secondary border-opacity-25">
+                        <div>
+                            <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25 px-3 py-2">
+                                <i class="bi bi-trophy-fill me-1"></i> คะแนน: <span id="gameScore">0</span>
+                            </span>
+                        </div>
+                        <div>
+                            <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25 px-3 py-2">
+                                <i class="bi bi-flag-fill me-1"></i> คำถามข้อที่: <span id="currentQuestionNum">1</span> / <span id="totalQuestionsCount">5</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Battle Status Box (HP Player vs Monster) -->
+                    <div class="row align-items-center mb-4 g-3">
+                        <div class="col-5 text-center p-3 rounded-3 bg-dark bg-opacity-50 border border-secondary border-opacity-25">
+                            <i class="bi bi-person-badge fs-2 text-info"></i>
+                            <h6 class="fw-bold mt-2 text-white mb-1" id="playerName">ผู้เล่น</h6>
+                            <div class="progress bg-secondary bg-opacity-25 mb-1" style="height: 8px;">
+                                <div id="playerHpBar" class="progress-bar bg-success" style="width: 100%"></div>
+                            </div>
+                            <small class="text-sub">HP: <span id="playerHp">100</span>/100</small>
+                        </div>
+                        <div class="col-2 text-center">
+                            <span class="badge bg-danger rounded-circle p-2 fs-5">VS</span>
+                        </div>
+                        <div class="col-5 text-center p-3 rounded-3 bg-dark bg-opacity-50 border border-secondary border-opacity-25">
+                            <i class="bi bi-bug-fill fs-2 text-danger"></i>
+                            <h6 class="fw-bold mt-2 text-white mb-1" id="bossName">Bug Monster (บั๊กเว็บไซต์)</h6>
+                            <div class="progress bg-secondary bg-opacity-25 mb-1" style="height: 8px;">
+                                <div id="bossHpBar" class="progress-bar bg-danger" style="width: 100%"></div>
+                            </div>
+                            <small class="text-sub">HP: <span id="bossHp">100</span>/100</small>
+                        </div>
+                    </div>
+
+                    <!-- Question & Options Area -->
+                    <div id="gameScreen">
+                        <div class="p-4 rounded-3 bg-dark bg-opacity-75 border border-secondary border-opacity-25 mb-4 text-center">
+                            <h5 class="fw-bold text-white mb-0" id="questionText">กำลังโหลดคำถาม...</h5>
+                        </div>
+
+                        <div class="row g-3" id="optionsContainer">
+                            <!-- ตัวเลือกคำตอบจะถูกเรนเดอร์ด้วย JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Game Over / Victory Screen (ซ่อนไว้ตอนเริ่ม) -->
+                    <div id="resultScreen" class="text-center py-5" style="display: none;">
+                        <div id="resultIcon" class="display-1 mb-3">🎉</div>
+                        <h3 class="fw-bold text-white mb-2" id="resultTitle">ชนะการต่อสู้แล้ว!</h3>
+                        <p class="text-sub mb-4" id="resultDesc">คุณมีความรู้ความเข้าใจเรื่องการพัฒนาเว็บไซต์อย่างยอดเยี่ยม</p>
+                        <button class="btn btn-custom px-5 py-2 fw-bold rounded-pill" onclick="startGame()">
+                            <i class="bi bi-arrow-clockwise me-1"></i> เล่นใหม่อีกครั้ง
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/i18n.js"></script>
+    <script>
+        // คลังคำถามวิชาการออกแบบและพัฒนาเว็บไซต์เบื้องต้น
+        const webQuizData = [
+            {
+                q: "ข้อใดคือภาษาหลักที่ใช้ในการสร้างโครงสร้างหลักของหน้าเว็บไซต์ (Markup Language)?",
+                options: ["CSS", "HTML", "JavaScript", "PHP"],
+                answer: 1,
+                hint: "HTML (HyperText Markup Language) ใช้กำหนดโครงสร้าง"
+            },
+            {
+                q: "หากต้องการตกแต่งสีสัน จัดวางเลย์เอาต์ และทำ Responsive เว็บไซต์ ควรใช้ภาษาใด?",
+                options: ["HTML", "CSS", "SQL", "Python"],
+                answer: 1,
+                hint: "CSS (Cascading Style Sheets) ใช้สำหรับการตกแต่งดีไซน์"
+            },
+            {
+                q: "แท็ก HTML ข้อใดใช้สำหรับสร้างลิงก์เชื่อมโยงไปยังหน้าเว็บอื่น (Hyperlink)?",
+                options: ["<link>", "<a>", "<href>", "<url>"],
+                answer: 1,
+                hint: "ใช้แท็ก <a> ร่วมกับแอตทริบิวต์ href"
+            },
+            {
+                q: "Bootstrap 5 เป็นเครื่องมือประเภทใดในการพัฒนาเว็บไซต์?",
+                options: ["Database Management", "CSS Framework", "Text Editor", "Web Browser"],
+                answer: 1,
+                hint: "เป็น Frontend Framework ช่วยให้จัดเลย์เอาต์และ Responsive ได้สะดวกรวดเร็ว"
+            },
+            {
+                q: "พร็อพเพอร์ตี้ใดใน CSS3 ที่ใช้จัดการระบบจัดวางแบบยืดหยุ่น (Flexible Box Layout)?",
+                options: ["display: grid;", "display: flex;", "float: left;", "position: fixed;"],
+                answer: 1,
+                hint: "เรียกว่า Flexbox หรือ display: flex;"
+            },
+            {
+                q: "ข้อใดคือคำสั่ง JavaScript สำหรับแสดงข้อความแจ้งเตือนป๊อปอัพบนหน้าจอเบราว์เซอร์?",
+                options: ["print()", "alert()", "console.log()", "prompt()"],
+                answer: 1,
+                hint: "ใช้ฟังก์ชัน alert('ข้อความ')"
+            },
+            {
+                q: "โครงสร้าง Semantic HTML ในข้อใดเหมาะสมที่สุดสำหรับการสร้างส่วนหัวข้อหลักของเว็บไซต์ (Header)?",
+                options: ["<top>", "<header>", "<head>", "<section>"],
+                answer: 1,
+                hint: "ใช้แท็ก <header> สื่อความหมายชัดเจน"
+            }
+        ];
+
+        let currentQIndex = 0;
+        let score = 0;
+        let playerHp = 100;
+        let bossHp = 100;
+        let shuffledQuiz = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUserSession();
+            if (user && document.getElementById('playerName')) {
+                document.getElementById('playerName').innerText = user.name;
+            }
+            startGame();
+        });
+
+        function startGame() {
+            currentQIndex = 0;
+            score = 0;
+            playerHp = 100;
+            bossHp = 100;
+            // สุ่มสลับข้อคำถาม
+            shuffledQuiz = [...webQuizData].sort(() => Math.random() - 0.5).slice(0, 5);
+            
+            document.getElementById('gameScreen').style.display = 'block';
+            document.getElementById('resultScreen').style.display = 'none';
+            document.getElementById('totalQuestionsCount').innerText = shuffledQuiz.length;
+            
+            updateHpBars();
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQIndex >= shuffledQuiz.length || playerHp <= 0 || bossHp <= 0) {
+                endGame(playerHp > 0);
+                return;
+            }
+
+            document.getElementById('currentQuestionNum').innerText = currentQIndex + 1;
+            const currentQuiz = shuffledQuiz[currentQIndex];
+            document.getElementById('questionText').innerText = currentQuiz.q;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            currentQuiz.options.forEach((opt, index) => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6';
+                col.innerHTML = `
+                    <button class="btn btn-outline-light w-150 py-3 text-start rounded-3 border-secondary border-opacity-50 w-100 option-btn" onclick="checkAnswer(${index})">
+                        <span class="badge bg-primary me-2">${String.fromCharCode(65 + index)}</span> ${opt}
+                    </button>
+                `;
+                optionsContainer.appendChild(col);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const currentQuiz = shuffledQuiz[currentQIndex];
+            const options = document.querySelectorAll('.option-btn');
+
+            // ล็อกปุ่มกันกดซ้ำ
+            options.forEach(btn => btn.disabled = true);
+
+            if (selectedIndex === currentQuiz.answer) {
+                // ตอบถูก -> โจมตี Boss บั๊กเว็บ
+                options[selectedIndex].classList.remove('btn-outline-light');
+                options[selectedIndex].classList.add('btn-success');
+                score += 20;
+                bossHp -= 20;
+                if (bossHp < 0) bossHp = 0;
+            } else {
+                // ตอบผิด -> โดน Boss โจมตีสวนกลับ
+                options[selectedIndex].classList.remove('btn-outline-light');
+                options[selectedIndex].classList.add('btn-danger');
+                options[currentQuiz.answer].classList.remove('btn-outline-light');
+                options[currentQuiz.answer].classList.add('btn-success'); // เฉลยข้อถูก
+                playerHp -= 25;
+                if (playerHp < 0) playerHp = 0;
+            }
+
+            document.getElementById('gameScore').innerText = score;
+            updateHpBars();
+
+            // รอ 1.5 วินาทีแล้วไปข้อถัดไป
+            setTimeout(() => {
+                currentQIndex++;
+                loadQuestion();
+            }, 1500);
+        }
+
+        function updateHpBars() {
+            document.getElementById('playerHp').innerText = playerHp;
+            document.getElementById('playerHpBar').style.width = `${playerHp}%`;
+
+            document.getElementById('bossHp').innerText = bossHp;
+            document.getElementById('bossHpBar').style.width = `${bossHp}%`;
+        }
+
+        function endGame(isWin) {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('resultScreen').style.display = 'block';
+
+            const iconEl = document.getElementById('resultIcon');
+            const titleEl = document.getElementById('resultTitle');
+            const descEl = document.getElementById('resultDesc');
+
+            if (isWin || bossHp <= playerHp) {
+                iconEl.innerText = "🏆";
+                titleEl.innerText = "ยินดีด้วย! คุณปราบ Bug สำเร็จแล้ว";
+                descEl.innerText = `คุณทำคะแนนสะสมได้ ${score} คะแนน แสดงว่ามีความเชี่ยวชาญด้านการออกแบบและพัฒนาเว็บไซต์เบื้องต้นเป็นอย่างดี!`;
+            } else {
+                iconEl.innerText = "💥";
+                titleEl.innerText = "พ่ายแพ้ให้กับ Bug เว็บไซต์!";
+                descEl.innerText = `คะแนนสะสมของคุณคือ ${score} คะแนน ลองทบทวนเนื้อหาในหน้าคลังสื่อการเรียนรู้แล้วกลับมาสู้อีกครั้งนะ!`;
+            }
+        }
+    </script>
+</body>
+</html>
