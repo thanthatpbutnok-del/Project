@@ -47,8 +47,8 @@
                         <div class="tab-pane fade show active" id="student-login-panel" role="tabpanel">
                             <form onsubmit="handleLogin(event, 'user')">
                                 <div class="mb-3">
-                                    <label class="form-label text-sub small"><i class="bi bi-card-heading me-1"></i>รหัสนักศึกษา</label>
-                                    <input type="text" class="form-control bg-dark text-white border-secondary" id="studentLoginId" placeholder="เช่น 6840144204" required>
+                                    <label class="form-label text-sub small"><i class="bi bi-card-heading me-1"></i>รหัสนักศึกษา หรือ อีเมล</label>
+                                    <input type="text" class="form-control bg-dark text-white border-secondary" id="studentLoginId" placeholder="เช่น 6840144204 หรือ email@example.com" required>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label text-sub small"><i class="bi bi-lock-fill me-1"></i>รหัสผ่าน</label>
@@ -67,23 +67,23 @@
                         <div class="tab-pane fade" id="admin-login-panel" role="tabpanel">
                             <form onsubmit="handleLogin(event, 'admin')">
                                 <div class="mb-3">
-                                    <label class="form-label text-sub small"><i class="bi bi-person-badge-fill me-1"></i>ชื่อผู้ใช้งานแอดมิน (Username)</label>
-                                    <input type="text" class="form-control bg-dark text-white border-secondary" id="adminUsername" placeholder="เช่น admin" value="6840144204" required>
+                                    <label class="form-label text-sub small"><i class="bi bi-envelope-at-fill me-1"></i>อีเมลอาจารย์ผู้สอน / Username</label>
+                                    <input type="text" class="form-control bg-dark text-white border-secondary" id="adminUsername" value="thanthatpbutnok@gmail.com" required>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label text-sub small"><i class="bi bi-key-fill me-1"></i>รหัสผ่านผู้ดูแลระบบ</label>
                                     <input type="password" class="form-control bg-dark text-white border-secondary" id="adminPassword" placeholder="กรอกรหัสผ่านแอดมิน" value="1234" required>
                                 </div>
                                 <button type="submit" class="btn btn-warning w-100 py-2 fw-bold rounded-3 text-dark">
-                                    <i class="bi bi-shield-fill-check me-1"></i> เข้าสู่ระบบแอดมิน (Admin Portal)
+                                    <i class="bi bi-shield-fill-check me-1"></i> เข้าสู่ระบบอาจารย์ (Admin Portal)
                                 </button>
                             </form>
                             <div class="mt-3 text-center text-sub small">
-                                🔒 สำหรับอาจารย์ผู้สอนหรือผู้ดูแลระบบหลังบ้านเท่านั้น
+                                🔒 สำหรับอาจารย์ผู้สอน (thanthatpbutnok@gmail.com)
                             </div>
                         </div>
 
-                        <!-- 3. แผงสมัครสมาชิก (เพิ่มยืนยันรหัสผ่าน + PIN 6 หลัก) -->
+                        <!-- 3. แผงสมัครสมาชิก (ช่องกรอกอีเมลไม่บังคับ) -->
                         <div class="tab-pane fade" id="register-panel" role="tabpanel">
                             <form onsubmit="handleRegister(event)">
                                 <div class="mb-3">
@@ -94,10 +94,14 @@
                                     <label class="form-label text-sub small"><i class="bi bi-person-fill me-1"></i>ชื่อ - นามสกุล</label>
                                     <input type="text" class="form-control bg-dark text-white border-secondary" id="regName" placeholder="เช่น นายสมชาย สายโค้ด" required>
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label text-sub small"><i class="bi bi-envelope-fill me-1"></i>อีเมลนักศึกษา (ระบุหรือไม่ระบูก็ได้)</label>
+                                    <input type="email" class="form-control bg-dark text-white border-secondary" id="regEmail" placeholder="เช่น student@gmail.com (ไม่บังคับกรอก)">
+                                </div>
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <label class="form-label text-sub small">หมู่เรียน</label>
-                                        <input type="text" class="form-control bg-dark text-white border-secondary" id="regGroup" placeholder="ว.6501" required>
+                                        <input type="text" class="form-control bg-dark text-white border-secondary" id="regGroup" placeholder="ค.6814" required>
                                     </div>
                                     <div class="col-6 mb-3">
                                         <label class="form-label text-sub small">รายวิชา</label>
@@ -114,8 +118,7 @@
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label text-sub small"><i class="bi bi-123 me-1"></i>ตั้งรหัส PIN ความปลอดภัย (6 หลัก)</label>
-                                    <input type="password" class="form-control bg-dark text-white border-secondary text-center fs-5 tracking-widest" id="regPin" maxlength="6" pattern="[0-9]{6}" placeholder="------" required title="กรุณากรอกรหัส PIN เป็นตัวเลข 6 หลัก">
-                                    <div class="form-text text-sub" style="font-size: 0.75rem;">ใช้สำหรับยืนยันความปลอดภัยในระบบ (ตัวเลข 6 หลัก)</div>
+                                    <input type="password" class="form-control bg-dark text-white border-secondary text-center fs-5" id="regPin" maxlength="6" pattern="[0-9]{6}" placeholder="------" required title="กรุณากรอกรหัส PIN เป็นตัวเลข 6 หลัก">
                                 </div>
                                 <button type="submit" class="btn btn-success w-100 py-2 fw-bold rounded-3">
                                     <i class="bi bi-person-plus-fill me-1"></i> ยืนยันการสมัครสมาชิกนักศึกษา
@@ -146,18 +149,18 @@
             }
 
             let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
-            let foundUser = users.find(u => (u.studentId === idOrUser || u.name === idOrUser) && u.password === password);
+            let foundUser = users.find(u => (u.studentId === idOrUser || u.email === idOrUser || u.name === idOrUser) && u.password === password);
 
             if (foundUser) {
                 if (roleType === 'admin' && foundUser.role !== 'admin') {
-                    alert('บัญชีนี้ไม่มีสิทธิ์เข้าใช้งานในฐานะแอดมิน!');
+                    alert('บัญชีนี้ไม่มีสิทธิ์เข้าใช้งานในฐานะอาจารย์/แอดมิน!');
                     return;
                 }
 
                 localStorage.setItem('skillverse_user', JSON.stringify(foundUser));
                 localStorage.setItem('skillverse_role', roleType === 'admin' ? 'admin' : (foundUser.role || 'user'));
                 
-                alert(`ยินดีต้อนรับคุณ ${foundUser.name} (${roleType === 'admin' ? 'Admin' : 'Student'})`);
+                alert(`ยินดีต้อนรับคุณ ${foundUser.name} (${roleType === 'admin' ? 'อาจารย์ผู้สอน' : 'นักศึกษา'})`);
                 
                 if (roleType === 'admin') {
                     window.location.href = 'admin.html';
@@ -173,19 +176,18 @@
             event.preventDefault();
             const studentId = document.getElementById('regStudentId').value.trim();
             const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
             const group = document.getElementById('regGroup').value.trim();
             const subject = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
             const password = document.getElementById('regPassword').value.trim();
             const confirmPassword = document.getElementById('regConfirmPassword').value.trim();
             const pin = document.getElementById('regPin').value.trim();
 
-            // ตรวจสอบว่ารหัสผ่านตรงกันไหม
             if (password !== confirmPassword) {
                 alert('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน กรุณาตรวจสอบอีกครั้ง!');
                 return;
             }
 
-            // ตรวจสอบ PIN 6 หลัก
             if (pin.length !== 6 || isNaN(pin)) {
                 alert('รหัส PIN ความปลอดภัยต้องเป็นตัวเลข 6 หลักเท่านั้น!');
                 return;
@@ -193,14 +195,15 @@
 
             let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
 
-            if (users.some(u => u.studentId === studentId)) {
-                alert('รหัสนักศึกษานี้มีในระบบแล้ว กรุณาเข้าสู่ระบบ!');
+            if (users.some(u => u.studentId === studentId || (email && u.email === email))) {
+                alert('รหัสนักศึกษาหรืออีเมลนี้มีในระบบแล้ว!');
                 return;
             }
 
             const newUser = {
                 studentId: studentId,
                 name: name,
+                email: email,
                 group: group,
                 subject: subject,
                 password: password,
@@ -213,7 +216,7 @@
             users.push(newUser);
             localStorage.setItem('sv_users_db', JSON.stringify(users));
 
-            alert('สมัครสมาชิกนักศึกษาสำเร็จ! กรุณาเข้าสู่ระบบด้วยรหัสนักศึกษาและรหัสผ่านของคุณ');
+            alert('สมัครสมาชิกสำเร็จ! สามารถเข้าสู่ระบบด้วยรหัสนักศึกษาและรหัสผ่านของคุณได้ทันที');
             const studentTab = new bootstrap.Tab(document.getElementById('student-login-tab'));
             studentTab.show();
             document.getElementById('studentLoginId').value = studentId;
