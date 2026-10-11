@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attitude Evaluation System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body style="background-color: #f8fafc !important; color: #1e293b !important;">
+
+    <!-- Top Header Bar -->
+    <div class="py-3 px-4 d-flex align-items-center justify-content-between text-white" style="background: linear-gradient(135deg, #4f46e5, #3b82f6);">
+        <div class="d-flex align-items-center gap-3">
+            <a href="index.html" class="btn btn-light btn-sm rounded-pill px-3 fw-bold shadow-sm">
+                <i class="bi bi-arrow-left me-1"></i> 🚀 กลับสู่ SkillVerse
+            </a>
+            <div>
+                <span class="small opacity-75 d-block" style="font-size: 0.75rem; letter-spacing: 1px;">DIGITAL EVALUATION SYSTEM</span>
+                <h5 class="mb-0 fw-bold">Smart Attitude Evaluation System</h5>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-light btn-sm rounded-pill px-3"><i class="bi bi-person-badge me-1"></i> โหมดนักเรียน</button>
+            <button class="btn btn-light btn-sm rounded-pill px-3 text-primary fw-bold"><i class="bi bi-pie-chart-fill me-1"></i> โหมดอาจารย์ (Dashboard)</button>
+            <button class="btn btn-outline-light btn-sm rounded-circle" onclick="window.print()"><i class="bi bi-printer-fill"></i></button>
+        </div>
+    </div>
+
+    <div class="container py-4">
+        <!-- Profile Banner -->
+        <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-3 fs-3">
+                        <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <h4 class="fw-bold mb-0 text-dark" id="attName">นายฐานฑัต บุตรนอก</h4>
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">ประเมินเรียบร้อย</span>
+                        </div>
+                        <p class="text-muted small mb-0 mt-1">
+                            รหัสนักศึกษา: <span id="attId">6840144204</span> • หมู่เรียน: <span id="attGroup">ว.6501</span> • รายวิชา: <span id="attSubject">การออกแบบและพัฒนาเว็บไซต์เบื้องต้น</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Analytics Content -->
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 text-center h-100 bg-primary text-white">
+                    <div class="small opacity-75">ระดับคุณภาพเจตคติ (Grade)</div>
+                    <div class="display-2 fw-bold my-2">C</div>
+                    <span class="badge bg-white text-primary rounded-pill py-2">เจตคติปานกลาง</span>
+                    <div class="small mt-3 opacity-75">คะแนนรวมเฉลี่ย 4.40 / 5.00</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                    <div class="text-muted small">ค่าเฉลี่ยรวม ($\bar{X}$)</div>
+                    <div class="display-5 fw-bold text-primary my-2">3.26</div>
+                    <div class="text-success small fw-medium">ระดับคุณภาพ: ปานกลาง</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                    <div class="text-muted small">ส่วนเบี่ยงเบนมาตรฐาน (S.D.)</div>
+                    <div class="display-5 fw-bold text-dark my-2">1.51</div>
+                    <div class="text-muted small">การกระจายตัวต่ำ (มีความสม่ำเสมอ)</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
+                    <div class="text-muted small">สัมประสิทธิ์ความแปรผัน (CV%)</div>
+                    <div class="display-5 fw-bold text-purple my-2" style="color: #8b5cf6;">46.4%</div>
+                    <div class="text-muted small">ความเสถียรของคำตอบสูง</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/i18n.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = getCurrentUserSession();
+            if (user) {
+                document.getElementById('attName').innerText = user.name;
+                document.getElementById('attId').innerText = user.studentId;
+                document.getElementById('attGroup').innerText = user.group;
+                document.getElementById('attSubject').innerText = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillVerse - Login & Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="d-flex align-items-center justify-content-center py-5" style="min-height: 100vh;">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="glass-card p-4 p-md-5">
+                    
+                    <div class="text-center mb-4">
+                        <i class="bi bi-rocket-takeoff-fill fs-1 text-gradient"></i>
+                        <h3 class="fw-bold mt-2 text-gradient">SkillVerse Portal</h3>
+                        <p class="text-sub small">ระบบประเมินทักษะและวางแผนสายอาชีพไอที</p>
+                    </div>
+
+                    <ul class="nav nav-pills nav-justified mb-4 p-1 rounded-pill bg-dark bg-opacity-50 border border-secondary border-opacity-25" id="authTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active rounded-pill text-white" id="login-tab" data-bs-toggle="pill" data-bs-target="#login-panel" type="button" role="tab">เข้าสู่ระบบ</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link rounded-pill text-white" id="register-tab" data-bs-toggle="pill" data-bs-target="#register-panel" type="button" role="tab">สมัครบัญชีใหม่</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="authTabContent">
+                        
+                        <div class="tab-pane fade show active" id="login-panel" role="tabpanel">
+                            <form id="loginForm" onsubmit="handleLogin(event)">
+                                <div class="mb-3">
+                                    <label class="form-label text-sub small"><i class="bi bi-card-heading me-1"></i>รหัสนักศึกษา (Student ID)</label>
+                                    <input type="text" class="form-control bg-dark text-white border-secondary" id="loginStudentId" placeholder="เช่น 6840144204" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label text-sub small"><i class="bi bi-lock-fill me-1"></i>รหัสผ่าน (Password)</label>
+                                    <input type="password" class="form-control bg-dark text-white border-secondary" id="loginPassword" placeholder="กรอกรหัสผ่าน" required>
+                                </div>
+                                <button type="submit" class="btn btn-custom w-100 py-2 fw-bold">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i> เข้าสู่ระบบ (Login)
+                                </button>
+                            </form>
+                            <div class="mt-4 text-center text-sub small border-top border-secondary border-opacity-25 pt-3">
+                                💡 <strong>บัญชีทดสอบ:</strong> รหัสนักศึกษา <code>6840144204</code> / รหัสผ่าน <code>1234</code>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="register-panel" role="tabpanel">
+                            <form id="registerForm" onsubmit="handleRegister(event)">
+                                <div class="mb-3">
+                                    <label class="form-label text-sub small"><i class="bi bi-card-heading me-1"></i>รหัสนักศึกษา</label>
+                                    <input type="text" class="form-control bg-dark text-white border-secondary" id="regStudentId" placeholder="เช่น 6840144204" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label text-sub small"><i class="bi bi-person-fill me-1"></i>ชื่อ - นามสกุล</label>
+                                    <input type="text" class="form-control bg-dark text-white border-secondary" id="regName" placeholder="เช่น นายฐานฑัต บุตรนอก" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label text-sub small">หมู่เรียน</label>
+                                        <input type="text" class="form-control bg-dark text-white border-secondary" id="regGroup" placeholder="ว.6501" required>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label class="form-label text-sub small">รายวิชา</label>
+                                        <input type="text" class="form-control bg-dark text-white border-secondary" id="regSubject" value="การออกแบบและพัฒนาเว็บไซต์เบื้องต้น" readonly>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label text-sub small"><i class="bi bi-key-fill me-1"></i>ตั้งรหัสผ่าน</label>
+                                    <input type="password" class="form-control bg-dark text-white border-secondary" id="regPassword" placeholder="อย่างน้อย 4 ตัวอักษร" required>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100 py-2 fw-bold rounded-3">
+                                    <i class="bi bi-person-plus-fill me-1"></i> ยืนยันการสมัครสมาชิก
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/i18n.js"></script>
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            const studentId = document.getElementById('loginStudentId').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            const users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
+            const foundUser = users.find(u => u.studentId === studentId && u.password === password);
+
+            if (foundUser) {
+                localStorage.setItem('skillverse_user', JSON.stringify(foundUser));
+                localStorage.setItem('skillverse_role', foundUser.role || 'user');
+                alert(`ยินดีต้อนรับ คุณ ${foundUser.name}`);
+                window.location.href = 'index.html';
+            } else {
+                alert('รหัสนักศึกษา หรือ รหัสผ่าน ไม่ถูกต้อง!');
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const studentId = document.getElementById('regStudentId').value.trim();
+            const name = document.getElementById('regName').value.trim();
+            const group = document.getElementById('regGroup').value.trim();
+            const subject = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
+            const password = document.getElementById('regPassword').value.trim();
+
+            let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
+
+            if (users.some(u => u.studentId === studentId)) {
+                alert('รหัสนักศึกษานี้มีในระบบแล้ว กรุณาเข้าสู่ระบบ!');
+                return;
+            }
+
+            const newUser = {
+                studentId: studentId,
+                name: name,
+                group: group,
+                subject: subject,
+                password: password,
+                status: 'ประเมินเรียบร้อย',
+                role: 'user'
+            };
+
+            users.push(newUser);
+            localStorage.setItem('sv_users_db', JSON.stringify(users));
+
+            alert('สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ');
+            const loginTab = new bootstrap.Tab(document.getElementById('login-tab'));
+            loginTab.show();
+            document.getElementById('loginStudentId').value = studentId;
+        }
+    </script>
+</body>
+</html>
