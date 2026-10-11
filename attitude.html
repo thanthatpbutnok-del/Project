@@ -3,98 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Attitude Evaluation System</title>
+    <title>Smart Attitude Evaluation System - SkillVerse</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body style="background-color: #f8fafc !important; color: #1e293b !important;">
+<body class="bg-light">
 
-    <!-- Top Header Bar -->
-    <div class="py-3 px-4 d-flex align-items-center justify-content-between text-white" style="background: linear-gradient(135deg, #4f46e5, #3b82f6);">
-        <div class="d-flex align-items-center gap-3">
-            <a href="index.html" class="btn btn-light btn-sm rounded-pill px-3 fw-bold shadow-sm">
-                <i class="bi bi-arrow-left me-1"></i> 🚀 กลับสู่ SkillVerse
-            </a>
-            <div>
-                <span class="small opacity-75 d-block" style="font-size: 0.75rem; letter-spacing: 1px;">DIGITAL EVALUATION SYSTEM</span>
-                <h5 class="mb-0 fw-bold">Smart Attitude Evaluation System</h5>
+    <!-- Top Blue Header Nav -->
+    <div class="bg-primary text-white py-3 px-4 shadow-sm">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <a href="index.html" class="btn btn-light btn-sm rounded-pill px-3 fw-bold text-primary">
+                    <i class="bi bi-arrow-left me-1"></i> กลับสู่ SkillVerse
+                </a>
+                <div>
+                    <span class="badge bg-white bg-opacity-25 text-white small">DIGITAL EVALUATION SYSTEM</span>
+                    <h4 class="fw-bold mb-0 text-white">Smart Attitude Evaluation System</h4>
+                </div>
             </div>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-outline-light btn-sm rounded-pill px-3"><i class="bi bi-person-badge me-1"></i> โหมดนักเรียน</button>
-            <button class="btn btn-light btn-sm rounded-pill px-3 text-primary fw-bold"><i class="bi bi-pie-chart-fill me-1"></i> โหมดอาจารย์ (Dashboard)</button>
-            <button class="btn btn-outline-light btn-sm rounded-circle" onclick="window.print()"><i class="bi bi-printer-fill"></i></button>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-outline-light btn-sm rounded-pill px-3 active" id="btnModeStudent" onclick="switchMode('student')">
+                    <i class="bi bi-phone me-1"></i> โหมดนักเรียน
+                </button>
+                <button class="btn btn-light btn-sm rounded-pill px-3 text-primary fw-bold" id="btnModeTeacher" onclick="switchMode('teacher')">
+                    <i class="bi bi-pie-chart-fill me-1"></i> โหมดอาจารย์ (Dashboard)
+                </button>
+                <button class="btn btn-outline-light btn-sm rounded-circle p-2" onclick="window.print()" title="พิมพ์รายงาน">
+                    <i class="bi bi-printer-fill"></i>
+                </button>
+            </div>
         </div>
     </div>
 
+    <!-- Main Container -->
     <div class="container py-4">
-        <!-- Profile Banner -->
+        
+        <!-- Profile Card -->
         <div class="card border-0 shadow-sm rounded-4 p-3 mb-4">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-3 fs-3">
-                        <i class="bi bi-mortarboard-fill"></i>
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-3 fs-3">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <div>
+                    <div class="d-flex align-items-center gap-2">
+                        <h4 class="fw-bold mb-0 text-dark" id="attitudeProfileName">นายฐานฑัต บุตรนอก</h4>
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">ประเมินเรียบร้อย</span>
                     </div>
-                    <div>
-                        <div class="d-flex align-items-center gap-2">
-                            <h4 class="fw-bold mb-0 text-dark" id="attName">นายฐานฑัต บุตรนอก</h4>
-                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">ประเมินเรียบร้อย</span>
-                        </div>
-                        <p class="text-muted small mb-0 mt-1">
-                            รหัสนักศึกษา: <span id="attId">6840144204</span> • หมู่เรียน: <span id="attGroup">ว.6501</span> • รายวิชา: <span id="attSubject">การออกแบบและพัฒนาเว็บไซต์เบื้องต้น</span>
-                        </p>
-                    </div>
+                    <p class="text-muted small mb-0 mt-1">
+                        รหัสนักศึกษา: <span id="attitudeProfileId">6840144204</span> • หมู่เรียน: <span id="attitudeProfileGroup">ค.6814</span> • รายวิชา: การออกแบบและพัฒนาเว็บไซต์เบื้องต้น
+                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- Dashboard Analytics Content -->
-        <div class="row g-4">
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm rounded-4 p-3 text-center h-100 bg-primary text-white">
-                    <div class="small opacity-75">ระดับคุณภาพเจตคติ (Grade)</div>
-                    <div class="display-2 fw-bold my-2">C</div>
-                    <span class="badge bg-white text-primary rounded-pill py-2">เจตคติปานกลาง</span>
-                    <div class="small mt-3 opacity-75">คะแนนรวมเฉลี่ย 4.40 / 5.00</div>
+        <!-- 1. ส่วนโหมดนักเรียน (Student Mode - แบบประเมินเจตคติ) -->
+        <div id="studentView" class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+            <h5 class="fw-bold text-primary mb-3"><i class="bi bi-pencil-square me-2"></i>แบบประเมินเจตคติต่อสายอาชีพไอที (Smart Attitude Quiz)</h5>
+            <p class="text-muted small mb-4">กรุณาเลือกเกณฑ์คะแนนที่ตรงกับระดับความคิดเห็นและความรู้สึกของคุณมากที่สุด (1 = น้อยที่สุด, 5 = มากที่สุด)</p>
+
+            <form id="attitudeForm" onsubmit="submitAttitude(event)">
+                <div class="mb-4 p-3 bg-light rounded-3 border">
+                    <label class="fw-bold text-dark mb-2">1. คุณมีความใฝ่รู้และพร้อมอัปเดตเทคโนโลยีใหม่ๆ อยู่เสมอ</label>
+                    <div class="d-flex justify-content-between text-muted small px-1 mb-2">
+                        <span>1 (น้อยที่สุด)</span><span>2</span><span>3</span><span>4</span><span>5 (มากที่สุด)</span>
+                    </div>
+                    <input type="range" class="form-range" min="1" max="5" value="4" id="q1" oninput="document.getElementById('q1_val').innerText = this.value">
+                    <div class="text-end fw-bold text-primary">คะแนน: <span id="q1_val">4</span>/5</div>
+                </div>
+
+                <div class="mb-4 p-3 bg-light rounded-3 border">
+                    <label class="fw-bold text-dark mb-2">2. เมื่อเจอข้อผิดพลาด (Bug) หรือปัญหาในการทำงาน คุณมีความอดทนพยายามแก้ไขจนสำเร็จ</label>
+                    <div class="d-flex justify-content-between text-muted small px-1 mb-2">
+                        <span>1 (น้อยที่สุด)</span><span>2</span><span>3</span><span>4</span><span>5 (มากที่สุด)</span>
+                    </div>
+                    <input type="range" class="form-range" min="1" max="5" value="5" id="q2" oninput="document.getElementById('q2_val').innerText = this.value">
+                    <div class="text-end fw-bold text-primary">คะแนน: <span id="q2_val">5</span>/5</div>
+                </div>
+
+                <div class="mb-4 p-3 bg-light rounded-3 border">
+                    <label class="fw-bold text-dark mb-2">3. คุณมีความสุขและสนุกกับการทำงานร่วมกับผู้อื่นในทีม</label>
+                    <div class="d-flex justify-content-between text-muted small px-1 mb-2">
+                        <span>1 (น้อยที่สุด)</span><span>2</span><span>3</span><span>4</span><span>5 (มากที่สุด)</span>
+                    </div>
+                    <input type="range" class="form-range" min="1" max="5" value="4" id="q3" oninput="document.getElementById('q3_val').innerText = this.value">
+                    <div class="text-end fw-bold text-primary">คะแนน: <span id="q3_val">4</span>/5</div>
+                </div>
+
+                <div class="mb-4 p-3 bg-light rounded-3 border">
+                    <label class="fw-bold text-dark mb-2">4. คุณมีความรับผิดชอบ ส่งงานตรงต่อเวลา และเคารพข้อตกลงในการทำงาน</label>
+                    <div class="d-flex justify-content-between text-muted small px-1 mb-2">
+                        <span>1 (น้อยที่สุด)</span><span>2</span><span>3</span><span>4</span><span>5 (มากที่สุด)</span>
+                    </div>
+                    <input type="range" class="form-range" min="1" max="5" value="5" id="q4" oninput="document.getElementById('q4_val').innerText = this.value">
+                    <div class="text-end fw-bold text-primary">คะแนน: <span id="q4_val">5</span>/5</div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary rounded-pill px-5 py-2 fw-bold fs-5 shadow">
+                        <i class="bi bi-send-check-fill me-2"></i> บันทึกผลประเมินเจตคติ
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 2. ส่วนโหมดอาจารย์ (Teacher View - สรุปสถิติเจตคติ) -->
+        <div id="teacherView" style="display: none;">
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-primary text-white text-center">
+                        <div class="small text-white-50">ระดับคุณภาพเจตคติ (Grade)</div>
+                        <h1 class="fw-bold display-4 my-2" id="attitudeGrade">C</h1>
+                        <span class="badge bg-white text-primary rounded-pill px-3 py-1 mx-auto" id="gradeLabel">เจตคติปานกลาง</span>
+                        <div class="small text-white-50 mt-2">คะแนนรวมเฉลี่ย <span id="avgScoreVal">4.40</span> / 5.00</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center h-100 justify-content-center">
+                        <div class="text-muted small">ค่าเฉลี่ยรวม (&bar;X)</div>
+                        <h2 class="fw-bold text-primary my-2" id="meanVal">3.26</h2>
+                        <div class="text-success small fw-bold">ระดับคุณภาพ: ปานกลาง</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center h-100 justify-content-center">
+                        <div class="text-muted small">ส่วนเบี่ยงเบนมาตรฐาน (S.D.)</div>
+                        <h2 class="fw-bold text-dark my-2" id="sdVal">1.51</h2>
+                        <div class="text-muted small">การกระจายตัวต่ำ (มีความสม่ำเสมอ)</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 bg-white text-center h-100 justify-content-center">
+                        <div class="text-muted small">สัมประสิทธิ์ความแปรผัน (CV%)</div>
+                        <h2 class="fw-bold text-purple my-2" style="color: #8b5cf6;" id="cvVal">46.4%</h2>
+                        <div class="text-muted small">ความเสถียรของคำตอบสูง</div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
-                    <div class="text-muted small">ค่าเฉลี่ยรวม ($\bar{X}$)</div>
-                    <div class="display-5 fw-bold text-primary my-2">3.26</div>
-                    <div class="text-success small fw-medium">ระดับคุณภาพ: ปานกลาง</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
-                    <div class="text-muted small">ส่วนเบี่ยงเบนมาตรฐาน (S.D.)</div>
-                    <div class="display-5 fw-bold text-dark my-2">1.51</div>
-                    <div class="text-muted small">การกระจายตัวต่ำ (มีความสม่ำเสมอ)</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card border-0 shadow-sm rounded-4 p-3 h-100">
-                    <div class="text-muted small">สัมประสิทธิ์ความแปรผัน (CV%)</div>
-                    <div class="display-5 fw-bold text-purple my-2" style="color: #8b5cf6;">46.4%</div>
-                    <div class="text-muted small">ความเสถียรของคำตอบสูง</div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-bar-chart-line-fill me-2 text-primary"></i>สรุปผลการวิเคราะห์เจตคติระดับบุคคล</h5>
+                <p class="text-muted small">ข้อมูลนี้ใช้สำหรับอาจารย์ผู้สอนในการวิเคราะห์พฤติกรรมและความพร้อมของนักศึกษาเป็นรายบุคคล</p>
+                <div class="alert alert-info border-0 rounded-3">
+                    <i class="bi bi-lightbulb-fill me-2"></i><strong>ข้อเสนอแนะสำหรับการพัฒนา:</strong> ควรส่งเสริมกิจกรรมการแก้ปัญหาเพื่อเพิ่มความอดทนในการทำงานร่วมกับผู้อื่นในสายงานพัฒนาเว็บไซต์
                 </div>
             </div>
         </div>
+
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/i18n.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const user = getCurrentUserSession();
+            const user = typeof getCurrentUserSession === 'function' ? getCurrentUserSession() : null;
             if (user) {
-                document.getElementById('attName').innerText = user.name;
-                document.getElementById('attId').innerText = user.studentId;
-                document.getElementById('attGroup').innerText = user.group;
-                document.getElementById('attSubject').innerText = "การออกแบบและพัฒนาเว็บไซต์เบื้องต้น";
+                if (document.getElementById('attitudeProfileName')) document.getElementById('attitudeProfileName').innerText = user.name;
+                if (document.getElementById('attitudeProfileId')) document.getElementById('attitudeProfileId').innerText = user.studentId;
+                if (document.getElementById('attitudeProfileGroup')) document.getElementById('attitudeProfileGroup').innerText = user.group || 'ค.6814';
             }
         });
+
+        // ฟังก์ชันสลับโหมดการทำงานระหว่าง นักเรียน กับ อาจารย์
+        function switchMode(mode) {
+            const studentView = document.getElementById('studentView');
+            const teacherView = document.getElementById('teacherView');
+            const btnStudent = document.getElementById('btnModeStudent');
+            const btnTeacher = document.getElementById('btnModeTeacher');
+
+            if (mode === 'student') {
+                studentView.style.display = 'block';
+                teacherView.style.display = 'none';
+
+                btnStudent.className = 'btn btn-outline-light btn-sm rounded-pill px-3 active';
+                btnTeacher.className = 'btn btn-light btn-sm rounded-pill px-3 text-primary fw-bold';
+            } else {
+                studentView.style.display = 'none';
+                teacherView.style.display = 'block';
+
+                btnTeacher.className = 'btn btn-outline-light btn-sm rounded-pill px-3 active';
+                btnStudent.className = 'btn btn-light btn-sm rounded-pill px-3 text-primary fw-bold';
+            }
+        }
+
+        function submitAttitude(event) {
+            event.preventDefault();
+            const q1 = parseInt(document.getElementById('q1').value);
+            const q2 = parseInt(document.getElementById('q2').value);
+            const q3 = parseInt(document.getElementById('q3').value);
+            const q4 = parseInt(document.getElementById('q4').value);
+
+            const avg = ((q1 + q2 + q3 + q4) / 4).toFixed(2);
+            document.getElementById('avgScoreVal').innerText = avg;
+            document.getElementById('meanVal').innerText = avg;
+
+            if (avg >= 4.5) {
+                document.getElementById('attitudeGrade').innerText = 'A';
+                document.getElementById('gradeLabel').innerText = 'เจตคติดีเยี่ยม';
+            } else if (avg >= 3.5) {
+                document.getElementById('attitudeGrade').innerText = 'B';
+                document.getElementById('gradeLabel').innerText = 'เจตคติดี';
+            } else {
+                document.getElementById('attitudeGrade').innerText = 'C';
+                document.getElementById('gradeLabel').innerText = 'เจตคติปานกลาง';
+            }
+
+            alert('บันทึกผลประเมินเจตคติเรียบร้อยแล้ว!');
+            switchMode('teacher');
+        }
     </script>
 </body>
 </html>
