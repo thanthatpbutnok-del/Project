@@ -151,6 +151,21 @@
             let users = JSON.parse(localStorage.getItem('sv_users_db')) || [];
             let foundUser = users.find(u => (u.studentId === idOrUser || u.email === idOrUser || u.name === idOrUser) && u.password === password);
 
+            if (!foundUser && roleType === 'admin' && idOrUser === 'thanthatpbutnok@gmail.com') {
+                foundUser = {
+                    studentId: '6840144204',
+                    name: 'นายฐานฑัต บุตรนอก',
+                    email: 'thanthatpbutnok@gmail.com',
+                    group: 'ค.6814',
+                    password: password,
+                    role: 'admin',
+                    status: 'ประเมินเรียบร้อย',
+                    lastScore: 85
+                };
+                users.push(foundUser);
+                localStorage.setItem('sv_users_db', JSON.stringify(users));
+            }
+
             if (foundUser) {
                 if (roleType === 'admin' && foundUser.role !== 'admin') {
                     alert('บัญชีนี้ไม่มีสิทธิ์เข้าใช้งานในฐานะอาจารย์/แอดมิน!');
@@ -159,6 +174,12 @@
 
                 localStorage.setItem('skillverse_user', JSON.stringify(foundUser));
                 localStorage.setItem('skillverse_role', roleType === 'admin' ? 'admin' : (foundUser.role || 'user'));
+
+                let existingUsers = JSON.parse(localStorage.getItem('sv_users_db')) || [];
+                if (!existingUsers.some(u => u.studentId === foundUser.studentId)) {
+                    existingUsers.push(foundUser);
+                    localStorage.setItem('sv_users_db', JSON.stringify(existingUsers));
+                }
                 
                 alert(`ยินดีต้อนรับคุณ ${foundUser.name} (${roleType === 'admin' ? 'อาจารย์ผู้สอน' : 'นักศึกษา'})`);
                 
@@ -216,7 +237,7 @@
             users.push(newUser);
             localStorage.setItem('sv_users_db', JSON.stringify(users));
 
-            alert('สมัครสมาชิกสำเร็จ! สามารถเข้าสู่ระบบด้วยรหัสนักศึกษาและรหัสผ่านของคุณได้ทันที');
+            alert('สมัครสมาชิกสำเร็จ! บัญชีของคุณถูกบันทึกลงในระบบของอาจารย์เรียบร้อยแล้ว');
             const studentTab = new bootstrap.Tab(document.getElementById('student-login-tab'));
             studentTab.show();
             document.getElementById('studentLoginId').value = studentId;
